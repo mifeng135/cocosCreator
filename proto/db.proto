@@ -1,0 +1,13 @@
+syntax = "proto3";
+option java_package = "com.game.db.proto"; 
+option java_outer_classname = "DataBaseMsg";
+
+message playerInfoS {
+	int32 id = 1;
+}
+
+message playerInfoR {
+	int32 id = 1;
+	string name = 2;
+}
+

@@ -1,0 +1,422 @@
+import BombManager from "./BombManager";
+
+const { ccclass, property } = cc._decorator;
+
+@ccclass
+export default class Bomb extends cc.Component {
+
+
+    private m_animation: cc.Animation = null;
+    private m_bombNode: cc.Node = null;
+    private m_bombPos: cc.Vec2 = null;
+    private m_bombTiledPos: cc.Vec2 = null;
+
+    private m_checkCollide: boolean = false;
+
+    private m_itemLayer: cc.TiledLayer = null;
+    private m_wallLayer: cc.TiledLayer = null;
+    private m_map: cc.TiledMap = null;
+
+
+    private m_bombPower: number = 2;
+
+    private m_leftPath: Array<cc.Vec2> = new Array();
+    private m_rightPath: Array<cc.Vec2> = new Array();
+    private m_downPath: Array<cc.Vec2> = new Array();
+    private m_upPath: Array<cc.Vec2> = new Array();
+    private m_removeTiledPath: Array<cc.Vec2> = new Array();
+
+    private m_bombSpriteAtlas: cc.SpriteAtlas = null;
+    private m_bombSpriteNodeArray: Array<cc.Node> = new Array();
+
+
+
+    private m_bombExplodeList: Array<Bomb> = new Array();
+    private m_checkBombList: Array<Bomb> = new Array();
+    private m_copyBombList: Array<Bomb> = new Array();
+
+
+    async onLoad() {
+
+        this.m_bombSpriteAtlas = await this.loaderBombSpriteFrame();
+
+        let spriteAtlas: cc.SpriteAtlas = await this.loaderSpriteFrame();
+        let spriteFrame = spriteAtlas.getSpriteFrame("black_0")
+
+        this.m_bombNode = new cc.Node("bombNode");
+        this.m_bombNode.zIndex = 9;
+        this.m_bombNode.scale = 0.8;
+
+        let sprite = this.m_bombNode.addComponent(cc.Sprite);
+        sprite.spriteFrame = spriteFrame;
+
+
+        let bombAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/bomb1");
+        bombAnimationClip.wrapMode = cc.WrapMode.Loop;
+        bombAnimationClip.speed = 0.8;
+
+        this.m_animation = this.m_bombNode.addComponent(cc.Animation);
+        this.m_animation.addClip(bombAnimationClip);
+
+
+        this.node.addChild(this.m_bombNode);
+        let animationState: cc.AnimationState = this.m_animation.play("bomb1");
+        animationState.repeatCount = 3;
+
+        this.m_animation.on("finished", this.onPlayEvent.bind(this), true);
+
+        this.m_bombNode.setPosition(this.m_bombPos);
+        BombManager.getInstance().add(this);
+    }
+
+
+    public onPlayEvent(event): void {
+        BombManager.getInstance().remove(this);
+
+        this.m_copyBombList = BombManager.getInstance().getBombList();
+        this.m_bombExplodeList.length = 0;
+        this.m_checkBombList.length = 0;
+
+        this.m_checkBombList.push(this);
+        this.m_bombExplodeList.push(this);
+        this.caleExplodeBombList();
+        this.removeBomb();
+        this.findPath();
+    }
+
+    private removeBomb(): void {
+        if (this.m_bombExplodeList.length > 0) {
+            for (let i = 0; i < this.m_bombExplodeList.length; i++) {
+                this.m_bombExplodeList[i].getBombNode().removeFromParent();
+            }
+        }
+    }
+
+    public setBombPosition(pos: cc.Vec2, tiledPos: cc.Vec2): void {
+        this.m_bombPos = pos;
+        this.m_bombTiledPos = tiledPos;
+    }
+
+    public setItemLayer(map: cc.TiledMap): void {
+        this.m_map = map;
+        this.m_wallLayer = this.m_map.getLayer("wall");
+        this.m_itemLayer = this.m_map.getLayer("item");
+
+
+    }
+
+
+    /**
+     * 递归检测哪些雷要爆炸
+     */
+    private caleExplodeBombList() {
+        if (this.m_checkBombList.length <= 0) {
+            return;
+        }
+
+        let leftBreak = false;
+        let rightBreak = false;
+        let upBreak = false;
+        let downBreak = false;
+
+        let bomb: Bomb = this.m_checkBombList.shift();
+        let bombTiledPos = bomb.getTiledPosition();
+
+        for (let i = 1; i <= this.m_bombPower; i++) {
+            let leftV = cc.v2(bombTiledPos.x - i, bombTiledPos.y);
+            let rightV = cc.v2(bombTiledPos.x + i, bombTiledPos.y);
+
+            let upV = cc.v2(bombTiledPos.x, bombTiledPos.y - i);
+            let downV = cc.v2(bombTiledPos.x, bombTiledPos.y + i);
+
+
+            let collideType = this.checkAroundBomb(leftV);
+
+            if (collideType == 1 && !leftBreak) {
+                let bomb = this.getBombByTiledPosition(leftV);
+                this.m_bombExplodeList.push(bomb);
+                this.m_checkBombList.push(bomb);
+            } else if (collideType == -1) {
+                leftBreak = true;
+            }
+
+
+            collideType = this.checkAroundBomb(rightV);
+            if (collideType == 1 && !rightBreak) {
+                let bomb: Bomb = this.getBombByTiledPosition(rightV);
+                this.m_bombExplodeList.push(bomb);
+                this.m_checkBombList.push(bomb);
+            } else if (collideType == -1) {
+                rightBreak = true;
+            }
+
+
+            collideType = this.checkAroundBomb(upV);
+            if (collideType == 1 && !upBreak) {
+                let bomb = this.getBombByTiledPosition(upV);
+                this.m_bombExplodeList.push(bomb);
+                this.m_checkBombList.push(bomb);
+            } else if (collideType == -1) {
+                upBreak = true;
+            }
+
+            collideType = this.checkAroundBomb(downV);
+            if (collideType == 1 && !downBreak) {
+                let bomb = this.getBombByTiledPosition(downV);
+                this.m_bombExplodeList.push(bomb);
+                this.m_checkBombList.push(bomb);
+            } else if (collideType == -1) {
+                downBreak = true;
+            }
+        }
+
+        this.caleExplodeBombList();
+    }
+
+    /**
+     * 检测碰撞体类型
+     * @param position 
+     */
+    private checkAroundBomb(position): number {
+        var mapSize = this.m_map.getMapSize();
+        if (position.x < 0 || position.x >= mapSize.width) return -1;
+        if (position.y < 0 || position.y >= mapSize.height) return -1;
+
+        if (this.m_itemLayer.getTileGIDAt(position)) {
+            return -1;
+        }
+
+        if (this.m_wallLayer.getTileGIDAt(position)) {
+            return -1;
+        }
+
+        if (this.getHaveBomb(position)) {
+            return 1;
+        }
+        return 0;
+    }
+
+    private getBombByTiledPosition(tiledPosition: cc.Vec2): Bomb {
+        for (let i = 0; i < this.m_copyBombList.length; i++) {
+            let bomb: Bomb = this.m_copyBombList[i];
+            let bombTiledPos = bomb.getTiledPosition();
+            if (bombTiledPos.x == tiledPosition.x && bombTiledPos.y == tiledPosition.y) {
+                return this.m_copyBombList.splice(i, 1)[0];
+            }
+        }
+        return null;
+    }
+
+    private getHaveBomb(tiledPosition: cc.Vec2): boolean {
+        for (let i = 0; i < this.m_copyBombList.length; i++) {
+            let bomb: Bomb = this.m_copyBombList[i];
+            let bombTiledPos = bomb.getTiledPosition();
+            if (bombTiledPos.x == tiledPosition.x && bombTiledPos.y == tiledPosition.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*****检测要爆炸的雷结束 */
+
+
+
+    /**
+     * 检测可以爆炸的路径精灵
+     */
+    private findPath() {
+        this.m_leftPath.length = 0;
+        this.m_rightPath.length = 0;
+        this.m_upPath.length = 0;
+        this.m_downPath.length = 0;
+        this.m_removeTiledPath.length = 0;
+        this.m_bombSpriteNodeArray.length = 0;
+
+
+
+        for (let index = 0; index < this.m_bombExplodeList.length; index++) {
+            let bomb: Bomb = this.m_bombExplodeList[index];
+            let bombTiledPos = bomb.getTiledPosition();
+
+
+
+            let leftBreak = false;
+            let rightBreak = false;
+            let upBreak = false;
+            let downBreak = false;
+
+            for (let i = 1; i <= this.m_bombPower; i++) {
+
+                let leftV = cc.v2(bombTiledPos.x - i, bombTiledPos.y);
+                let rightV = cc.v2(bombTiledPos.x + i, bombTiledPos.y);
+
+                let upV = cc.v2(bombTiledPos.x, bombTiledPos.y - i);
+                let downV = cc.v2(bombTiledPos.x, bombTiledPos.y + i);
+
+                if (this.checkAround(leftV, leftBreak) && !leftBreak) {
+                    this.m_leftPath.push(leftV);
+                } else {
+                    leftBreak = true;
+                }
+
+                if (this.checkAround(rightV, rightBreak) && !rightBreak) {
+                    this.m_rightPath.push(rightV);
+                } else {
+                    rightBreak = true;
+                }
+
+                if (this.checkAround(upV, upBreak) && !upBreak) {
+                    this.m_upPath.push(upV);
+                } else {
+                    upBreak = true;
+                }
+
+                if (this.checkAround(downV, downBreak) && !downBreak) {
+                    this.m_downPath.push(downV);
+                } else {
+                    downBreak = true;
+                }
+            }
+        }
+
+        this.createBombSprite();
+    }
+
+    private checkAround(nextPosition, flag) {
+        var mapSize = this.m_map.getMapSize();
+        if (nextPosition.x < 0 || nextPosition.x >= mapSize.width) return false;
+        if (nextPosition.y < 0 || nextPosition.y >= mapSize.height) return false;
+
+        if (this.m_itemLayer.getTileGIDAt(nextPosition)) {
+            if(!flag) {
+                this.m_removeTiledPath.push(nextPosition);
+            }
+            return false;
+        }
+
+        if (this.m_wallLayer.getTileGIDAt(nextPosition)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**检测可以爆炸的路径精灵 结束 */
+
+
+
+    public getBombNode(): cc.Node {
+        return this.m_bombNode;
+    }
+
+    public getCheckCollide(): boolean {
+        return this.m_checkCollide;
+    }
+
+    public setCheckCollied(value: boolean): void {
+        this.m_checkCollide = value;
+    }
+
+    public getTiledPosition(): cc.Vec2 {
+        return this.m_bombTiledPos;
+    }
+
+    public createBombSprite(): void {
+        this.createSpriteBomb(this.m_bombTiledPos, "center", 0);
+        for (let i = 0; i < this.m_leftPath.length; i++) {
+            let position = this.m_leftPath[i];
+            this.createSpriteBomb(position, "left", i);
+        }
+
+        for (let i = 0; i < this.m_rightPath.length; i++) {
+            let position = this.m_rightPath[i];
+            this.createSpriteBomb(position, "right", i);
+        }
+
+        for (let i = 0; i < this.m_downPath.length; i++) {
+            let position = this.m_downPath[i];
+            this.createSpriteBomb(position, "down", i);
+        }
+
+        for (let i = 0; i < this.m_upPath.length; i++) {
+            let position = this.m_upPath[i];
+            this.createSpriteBomb(position, "up", i);
+        }
+
+        this.scheduleOnce(this.remveTiled.bind(this), 0.08 * this.m_bombPower)
+
+        this.scheduleOnce(this.clearBombSpriteArray.bind(this), 0.5)
+    }
+
+    private remveTiled() {
+        for (let i = 0; i < this.m_removeTiledPath.length; i++) {
+            let position = this.m_removeTiledPath[i];
+            this.m_itemLayer.setTileGIDAt(0, position, 0);
+        }
+    }
+
+    private createSpriteBomb(position: cc.Vec2, spirteFrame: string, index: number): void {
+        let worldPosition = this.tiledTranlateToWorldPos(position);
+        let bomeSpriteNode = new cc.Node("bomeSprite");
+        bomeSpriteNode.opacity = 0;
+        let sprite = bomeSpriteNode.addComponent(cc.Sprite);
+        sprite.spriteFrame = this.m_bombSpriteAtlas.getSpriteFrame(spirteFrame);
+        bomeSpriteNode.setPosition(worldPosition);
+        this.m_bombSpriteNodeArray.push(bomeSpriteNode);
+        this.node.addChild(bomeSpriteNode);
+        let fadein = cc.fadeIn(index * 0.08);
+        bomeSpriteNode.runAction(fadein);
+    }
+
+    private clearBombSpriteArray(): void {
+        if (this.m_bombSpriteNodeArray.length > 0) {
+            for (let i = 0; i < this.m_bombSpriteNodeArray.length; i++) {
+                let bombSpriteNode = this.m_bombSpriteNodeArray[i];
+                bombSpriteNode.removeFromParent();
+            }
+        }
+    }
+
+    private tiledTranlateToWorldPos(pos: cc.Vec2): cc.Vec2 {
+        let tileSize = this.m_map.getTileSize();
+        let mapSize = this.m_map.getMapSize();
+        let x = pos.x * tileSize.width + 20;
+        let y = (mapSize.height - pos.y) * tileSize.height - 20;
+        return cc.v2(x, y);
+    }
+
+    public loaderRes(animationName: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            cc.loader.loadRes(animationName, cc.AnimationClip, (error, res) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(res);
+            })
+        });
+    }
+
+
+
+    public loaderSpriteFrame(): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            cc.loader.loadRes("game/bomb", cc.SpriteAtlas, (error, res) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(res);
+            })
+        });
+    }
+
+    public loaderBombSpriteFrame(): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            cc.loader.loadRes("game/bombSprite", cc.SpriteAtlas, (error, res) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(res);
+            })
+        });
+    }
+}
