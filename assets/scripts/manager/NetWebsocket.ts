@@ -1,7 +1,9 @@
 import { loginToGateS } from "../proto/LoginMsg";
 import MsgUtil from "../utils/MsgUtil";
 import MsgCmdConstant from "../constant/MsgCmdConstant";
-import { playerInfoS } from "../../../proto/DataBaseMsg";
+import { playerInfoR, playerInfoS } from "../proto/DataBaseMsg";
+import CustomizeEvent from "../event/CustomizeEvent";
+
 
 const { ccclass, property } = cc._decorator;
 
@@ -13,9 +15,6 @@ export default class NetWebsocket {
 
     private m_playerIndex: number = 0;
 
-
-
-
     private constructor() { }
 
     public static getInstance(): NetWebsocket {
@@ -25,7 +24,10 @@ export default class NetWebsocket {
         return this.m_instance;
     }
 
-    public initWebSocket(ip: string, playerIndex: number): void {
+    public initWebSocket(ip: string = '', playerIndex: number): void {
+        if (ip.length <= 0) {
+            return;
+        }
         this.m_socket = new WebSocket("ws://" + ip);
         this.m_socket.binaryType = "arraybuffer";
         this.m_socket.onopen = this.onOpenListener.bind(this);
@@ -38,22 +40,14 @@ export default class NetWebsocket {
         let msgEncode = loginToGateS.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_TO_GATE_S, msgEncode);
         this.sendMsg(sendBuf);
-
-
-
-        let dbMsg = playerInfoS.create({ id: this.m_playerIndex })
-        let dbMsgEncode = playerInfoS.encode(dbMsg).finish();
-
-        let dbSendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_DB_PLAYER_INFO_S,dbMsgEncode)
-        this.sendMsg(dbSendBuf);
-
     }
 
     private onMessageListener(ev: MessageEvent): void {
         var dv = new DataView(ev.data);
-        let cmd = dv.getInt32(0); //设置一个cmd
-
-        console.log("end");
+        let cmd = dv.getInt32(0);
+        let dataLength = dv.getInt32(4);
+        var u8view = new Uint8Array(ev.data, 8);
+        CustomizeEvent.getInstance().MFDispatchEvent(cmd, u8view);
     }
 
 

@@ -1,6 +1,7 @@
 import { loginR } from "../proto/LoginMsg";
 import NetWebsocket from "./NetWebsocket";
 import MsgCmdConstant from "../constant/MsgCmdConstant";
+import CustomizeEvent from "../event/CustomizeEvent";
 
 
 const { ccclass, property } = cc._decorator;
@@ -39,9 +40,7 @@ export default class NetHttp {
     public decodeMsg(cmd: number, u8: Uint8Array): void {
         if (cmd == MsgCmdConstant.MSG_CMD_LOGIN_R) {
             let data: loginR = loginR.decode(u8);
-            if (data.ret == MsgCmdConstant.MSG_RET_CODE_SUCCESS) {
-                NetWebsocket.getInstance().initWebSocket(data.ip, data.playerIndex);
-            }
+            CustomizeEvent.getInstance().MFDispatchEvent(cmd, data);
         }
     }
 }

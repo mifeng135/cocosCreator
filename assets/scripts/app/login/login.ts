@@ -4,6 +4,7 @@ import { loginS } from "../../proto/LoginMsg"
 import MsgUtil from "./../../utils/MsgUtil"
 import NetHttp from "../../manager/NetHttp";
 import MsgCmdConstant from "../../constant/MsgCmdConstant";
+import CustomizeEvent from "../../event/CustomizeEvent";
 
 const { ccclass, property } = cc._decorator;
 
@@ -15,6 +16,24 @@ export default class Login extends cc.Component {
 
 
     protected onLoad(): void {
+        this.addEventListener();
+    }
+    protected onDestroy(): void {
+        this.removeEventListener();
+    }
+    private addEventListener() {
+        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_LOGIN_R, this.onLogicR, this);
+    }
+
+    private removeEventListener() {
+        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_LOGIN_R, this.onLogicR)
+    }
+
+    private onLogicR(data): void {
+        if (data.ret == MsgCmdConstant.MSG_RET_CODE_SUCCESS) {
+            NetWebsocket.getInstance().initWebSocket(data.ip, data.playerIndex);
+            cc.director.loadScene("lobbyScene");
+        }
     }
 
     public onAccountClick(): void {
@@ -22,8 +41,6 @@ export default class Login extends cc.Component {
         let msgEncode = loginS.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_S, msgEncode);
         NetHttp.getInstance().post(sendBuf);
-
-        let animation = new cc.Animation();
     }
 
     public onToggleClick(event): void {

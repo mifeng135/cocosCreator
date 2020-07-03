@@ -11,6 +11,7 @@ export default class MsgCmdConstant {
     public static MSG_CMD_LOGIN_TO_GATE_S: number = 1;
 
     public static MSG_CMD_DB_PLAYER_INFO_S: number = 3001;
+    public static MSG_CMD_DB_PLAYER_INFO_R: number = 3002;
 
     
     public static MSG_CMD_LOGIN_S: number = 1001;
