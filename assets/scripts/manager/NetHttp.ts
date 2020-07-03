@@ -1,4 +1,3 @@
-import { loginR } from "../proto/LoginMsg";
 import NetWebsocket from "./NetWebsocket";
 import MsgCmdConstant from "../constant/MsgCmdConstant";
 import CustomizeEvent from "../event/CustomizeEvent";
@@ -38,9 +37,6 @@ export default class NetHttp {
     }
 
     public decodeMsg(cmd: number, u8: Uint8Array): void {
-        if (cmd == MsgCmdConstant.MSG_CMD_LOGIN_R) {
-            let data: loginR = loginR.decode(u8);
-            CustomizeEvent.getInstance().MFDispatchEvent(cmd, data);
-        }
+        CustomizeEvent.getInstance().MFDispatchEvent(cmd, u8);
     }
 }

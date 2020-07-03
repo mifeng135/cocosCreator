@@ -1,0 +1,26 @@
+syntax = "proto3";
+package game;
+
+
+message playerPosR {
+	int32 direction = 1;
+	int32 timeStamp = 2;
+}
+
+message playerPosS {
+	int32 direction = 1;
+	int32 timeStamp = 2;
+}
+
+message playerBombPlaceR {
+	int32 x = 1;
+	int32 y = 2;
+}
+
+message playerBombPlaceS {
+	int32 x = 1;
+	int32 y = 2;
+}
+
+
+

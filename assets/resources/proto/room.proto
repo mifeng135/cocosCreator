@@ -1,0 +1,23 @@
+syntax = "proto3";
+package game;
+
+message createRoomS {
+
+}
+
+message createRoomR {
+	int32 ret = 1;
+}
+
+message joinRoomS {
+	
+}
+
+message joinRoomR {
+	int32 ret = 1;
+}
+
+message playerLeftR {
+	int32 leftId = 1;
+}
+

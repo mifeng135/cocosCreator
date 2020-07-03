@@ -1,10 +1,10 @@
-import UIManager from "../../manager/UIManager";
 import NetWebsocket from "../../manager/NetWebsocket";
-import { loginS } from "../../proto/LoginMsg"
 import MsgUtil from "./../../utils/MsgUtil"
 import NetHttp from "../../manager/NetHttp";
 import MsgCmdConstant from "../../constant/MsgCmdConstant";
 import CustomizeEvent from "../../event/CustomizeEvent";
+import ProtoManager from "../../manager/ProtoManager";
+import ProtoConstant from "../../constant/ProtoConstant";
 
 const { ccclass, property } = cc._decorator;
 
@@ -15,7 +15,8 @@ export default class Login extends cc.Component {
     m_accountButton = null;
 
 
-    protected onLoad(): void {
+    protected async onLoad(): Promise<void> {
+        ProtoManager.getInstance().loaderProto();
         this.addEventListener();
     }
     protected onDestroy(): void {
@@ -30,15 +31,18 @@ export default class Login extends cc.Component {
     }
 
     private onLogicR(data): void {
-        if (data.ret == MsgCmdConstant.MSG_RET_CODE_SUCCESS) {
-            NetWebsocket.getInstance().initWebSocket(data.ip, data.playerIndex);
+        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginR");
+        let decodeData = msgObject.decode(data);
+        if (decodeData.ret == MsgCmdConstant.MSG_RET_CODE_SUCCESS) {
+            NetWebsocket.getInstance().initWebSocket(decodeData.ip, decodeData.playerIndex);
             cc.director.loadScene("lobbyScene");
         }
     }
 
     public onAccountClick(): void {
-        let msg = loginS.create({ account: "123123", password: "123123" })
-        let msgEncode = loginS.encode(msg).finish();
+        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginS");
+        let msg = msgObject.create({ account: "123123", password: "123123" })
+        let msgEncode = msgObject.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_S, msgEncode);
         NetHttp.getInstance().post(sendBuf);
     }
@@ -46,4 +50,5 @@ export default class Login extends cc.Component {
     public onToggleClick(event): void {
 
     }
+
 }

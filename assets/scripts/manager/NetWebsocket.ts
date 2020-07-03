@@ -1,8 +1,8 @@
-import { loginToGateS } from "../proto/LoginMsg";
 import MsgUtil from "../utils/MsgUtil";
 import MsgCmdConstant from "../constant/MsgCmdConstant";
-import { playerInfoR, playerInfoS } from "../proto/DataBaseMsg";
 import CustomizeEvent from "../event/CustomizeEvent";
+import ProtoManager from "./ProtoManager";
+import ProtoConstant from "../constant/ProtoConstant";
 
 
 const { ccclass, property } = cc._decorator;
@@ -36,8 +36,9 @@ export default class NetWebsocket {
     }
 
     private onOpenListener(ev: Event): void {
-        let msg = loginToGateS.create({ playerIndex: this.m_playerIndex })
-        let msgEncode = loginToGateS.encode(msg).finish();
+        let msgoc = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN,"loginToGateS")
+        let msg = msgoc.create({ playerIndex: this.m_playerIndex })
+        let msgEncode = msgoc.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_TO_GATE_S, msgEncode);
         this.sendMsg(sendBuf);
     }
@@ -50,10 +51,7 @@ export default class NetWebsocket {
         CustomizeEvent.getInstance().MFDispatchEvent(cmd, u8view);
     }
 
-
     public sendMsg(data1): void {
-        console.log("being");
         this.m_socket.send(data1);
     }
-
 }

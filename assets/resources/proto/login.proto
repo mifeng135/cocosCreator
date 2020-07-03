@@ -1,6 +1,5 @@
 syntax = "proto3";
-option java_package = "com.game.login.proto"; 
-option java_outer_classname = "ProtoMsg";
+package game;
 
 message loginS {
     string account = 1;
