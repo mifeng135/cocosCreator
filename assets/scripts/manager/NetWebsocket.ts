@@ -3,6 +3,7 @@ import MsgCmdConstant from "../constant/MsgCmdConstant";
 import CustomizeEvent from "../event/CustomizeEvent";
 import ProtoManager from "./ProtoManager";
 import ProtoConstant from "../constant/ProtoConstant";
+import LocalDataManager from "./LocalDataManager";
 
 
 const { ccclass, property } = cc._decorator;
@@ -13,8 +14,6 @@ export default class NetWebsocket {
     private static m_instance: NetWebsocket = null;
     private m_socket: WebSocket = null;
 
-    private m_playerIndex: number = 0;
-
     private constructor() { }
 
     public static getInstance(): NetWebsocket {
@@ -24,20 +23,18 @@ export default class NetWebsocket {
         return this.m_instance;
     }
 
-    public initWebSocket(ip: string = '', playerIndex: number): void {
-        if (ip.length <= 0) {
-            return;
-        }
+    public initWebSocket(): void {
+        let ip = LocalDataManager.getInstance().getSocketIp();
         this.m_socket = new WebSocket("ws://" + ip);
         this.m_socket.binaryType = "arraybuffer";
         this.m_socket.onopen = this.onOpenListener.bind(this);
         this.m_socket.onmessage = this.onMessageListener.bind(this);
-        this.m_playerIndex = playerIndex;
     }
 
     private onOpenListener(ev: Event): void {
-        let msgoc = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN,"loginToGateS")
-        let msg = msgoc.create({ playerIndex: this.m_playerIndex })
+        let playerId = LocalDataManager.getInstance().getPlayerId();
+        let msgoc = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginToGateS")
+        let msg = msgoc.create({ playerIndex: playerId })
         let msgEncode = msgoc.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_TO_GATE_S, msgEncode);
         this.sendMsg(sendBuf);

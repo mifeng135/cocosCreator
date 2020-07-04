@@ -5,6 +5,7 @@ import MsgCmdConstant from "../../constant/MsgCmdConstant";
 import CustomizeEvent from "../../event/CustomizeEvent";
 import ProtoManager from "../../manager/ProtoManager";
 import ProtoConstant from "../../constant/ProtoConstant";
+import LocalDataManager from "../../manager/LocalDataManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -13,7 +14,6 @@ export default class Login extends cc.Component {
 
     @property(cc.Button)
     m_accountButton = null;
-
 
     protected async onLoad(): Promise<void> {
         ProtoManager.getInstance().loaderProto();
@@ -34,7 +34,9 @@ export default class Login extends cc.Component {
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginR");
         let decodeData = msgObject.decode(data);
         if (decodeData.ret == MsgCmdConstant.MSG_RET_CODE_SUCCESS) {
-            NetWebsocket.getInstance().initWebSocket(decodeData.ip, decodeData.playerIndex);
+            LocalDataManager.getInstance().setPlayerInfo(decodeData.id, decodeData.name);
+            LocalDataManager.getInstance().setSocketIp(decodeData.ip);
+            NetWebsocket.getInstance().initWebSocket();
             cc.director.loadScene("lobbyScene");
         }
     }

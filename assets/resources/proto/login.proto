@@ -8,10 +8,11 @@ message loginS {
 
 message loginR {
 	int32 ret = 1;
-	int32 playerIndex = 2;
-	string ip = 3;
+	string ip = 2;
+	int32 id = 3;
+	string name = 4;
 }
 
 message loginToGateS {
-	int32 playerIndex = 1;
+	int32 playerId = 1;
 }
