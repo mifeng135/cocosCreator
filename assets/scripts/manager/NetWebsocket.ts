@@ -34,7 +34,7 @@ export default class NetWebsocket {
     private onOpenListener(ev: Event): void {
         let playerId = LocalDataManager.getInstance().getPlayerId();
         let msgoc = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginToGateS")
-        let msg = msgoc.create({ playerIndex: playerId })
+        let msg = msgoc.create({ playerId: playerId })
         let msgEncode = msgoc.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_TO_GATE_S, msgEncode);
         this.sendMsg(sendBuf);
