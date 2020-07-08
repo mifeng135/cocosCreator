@@ -28,14 +28,20 @@ export default class MsgCmdConstant {
     //通过gate发送到游戏服务器
     public static MSG_CMD_GAME_BEGIN: number = 4000;
 
-    //
-    public static MSG_CMD_GAME_SUB_GAME_BEGIN = 4001;
-    public static MSG_CMD_GAME_JOIN_ROOM_S: number = 4002; 
-    public static MSG_CMD_GAME_JOIN_ROOM_R: number = 4003;
-    public static MSG_CMD_GAME_CREATE_ROOM_S: number = 4004; 
-    public static MSG_CMD_GAME_CREATE_ROOM_R: number = 4005; 
-    public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R:number = 4006;
-    public static MSG_CMD_GAME_SUB_GAME_END = 4199;
+    public static MSG_CMD_GAME_CREATE_ROOM_S: number = 4001;
+    public static MSG_CMD_GAME_CREATE_ROOM_R: number = 4002;
+    public static MSG_CMD_GAME_JOIN_ROOM_S: number = 4003;
+    public static MSG_CMD_GAME_JOIN_ROOM_R: number = 4004;
+    public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R: number = 4005;
+
+    public static MSG_CMD_GAME_ROOM_PLAYER_LIST_S:number = 4006;
+    public static MSG_CMD_GAME_ROOM_PLAYER_LIST_R:number = 4007;
+
+
+    public static MSG_CMD_GAME_READY_S:number = 4008;
+    public static MSG_CMD_GAME_READY_R:number = 4009;
+
+    public static MSG_CMD_GAME_START_R:number = 4010;
 
     public static MSG_CMD_GAME_END: number = 4999;
 

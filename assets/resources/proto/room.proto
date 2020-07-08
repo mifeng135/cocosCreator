@@ -21,3 +21,28 @@ message playerLeftR {
 	int32 leftId = 1;
 }
 
+message roomPlayerListS {
+
+}
+
+message roomPlayerListR {
+	repeated player playerList = 1;
+}
+
+message player {
+	int32 id = 1;
+	string name = 2;
+	int32 position = 3;
+}
+
+message readyS {
+
+}
+
+message readyR {
+}
+
+message gameStartR {
+	repeated player playerList = 1;
+}
+

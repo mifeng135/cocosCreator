@@ -81,22 +81,22 @@
         "__id__": 17
       },
       {
-        "__id__": 23
+        "__id__": 24
       },
       {
-        "__id__": 25
+        "__id__": 26
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 32
-      },
-      {
         "__id__": 33
       },
       {
         "__id__": 34
+      },
+      {
+        "__id__": 35
       }
     ],
     "_prefab": null,
@@ -802,7 +802,7 @@
         "__id__": 21
       },
       {
-        "__id__": 22
+        "__id__": 23
       }
     ],
     "_prefab": null,
@@ -993,7 +993,11 @@
     "_grayMaterial": null,
     "duration": 0.1,
     "zoomScale": 1.2,
-    "clickEvents": [],
+    "clickEvents": [
+      {
+        "__id__": 22
+      }
+    ],
     "_N$interactable": true,
     "_N$enableAutoGrayEffect": false,
     "_N$transition": 3,
@@ -1064,6 +1068,16 @@
     "_id": "10SJKP8YlKz5qXvLsB4IhG"
   },
   {
+    "__type__": "cc.ClickEvent",
+    "target": {
+      "__id__": 2
+    },
+    "component": "",
+    "_componentId": "7d1366ZDwFKhrclXV3SYCQ1",
+    "handler": "onWexinClick",
+    "customEventData": ""
+  },
+  {
     "__type__": "cc.Widget",
     "_name": "",
     "_objFlags": 0,
@@ -1101,7 +1115,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 24
+        "__id__": 25
       }
     ],
     "_prefab": null,
@@ -1157,7 +1171,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 23
+      "__id__": 24
     },
     "_enabled": true,
     "_materials": [
@@ -1195,16 +1209,16 @@
     },
     "_children": [
       {
-        "__id__": 26
+        "__id__": 27
       },
       {
-        "__id__": 28
+        "__id__": 29
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 30
+        "__id__": 31
       }
     ],
     "_prefab": null,
@@ -1260,13 +1274,13 @@
     "_name": "Background",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 25
+      "__id__": 26
     },
     "_children": [],
     "_active": true,
     "_components": [
       {
-        "__id__": 27
+        "__id__": 28
       }
     ],
     "_prefab": null,
@@ -1322,7 +1336,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 26
+      "__id__": 27
     },
     "_enabled": true,
     "_materials": [
@@ -1356,13 +1370,13 @@
     "_name": "checkmark",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 25
+      "__id__": 26
     },
     "_children": [],
     "_active": true,
     "_components": [
       {
-        "__id__": 29
+        "__id__": 30
       }
     ],
     "_prefab": null,
@@ -1418,7 +1432,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 28
+      "__id__": 29
     },
     "_enabled": true,
     "_materials": [
@@ -1452,7 +1466,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 25
+      "__id__": 26
     },
     "_enabled": true,
     "_normalMaterial": {
@@ -1515,16 +1529,16 @@
     "hoverSprite": null,
     "_N$disabledSprite": null,
     "_N$target": {
-      "__id__": 26
+      "__id__": 27
     },
     "_N$isChecked": true,
     "toggleGroup": null,
     "checkMark": {
-      "__id__": 29
+      "__id__": 30
     },
     "checkEvents": [
       {
-        "__id__": 31
+        "__id__": 32
       }
     ],
     "_id": "bcUEl2g4RGz5iO+K5/LPqU"

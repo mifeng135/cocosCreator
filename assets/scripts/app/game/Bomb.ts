@@ -101,8 +101,6 @@ export default class Bomb extends cc.Component {
         this.m_map = map;
         this.m_wallLayer = this.m_map.getLayer("wall");
         this.m_itemLayer = this.m_map.getLayer("item");
-
-
     }
 
 

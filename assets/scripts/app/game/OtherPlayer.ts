@@ -2,7 +2,6 @@ import Game from "./Game";
 import CustomizeEvent from "../../event/CustomizeEvent";
 import Bomb from "./Bomb";
 import BombManager from "./BombManager";
-import Joystick from "../../commonUI/Joystick";
 
 const { ccclass, property } = cc._decorator;
 
@@ -16,7 +15,7 @@ enum DIRECTION {
 
 
 @ccclass
-export default class Player extends cc.Component {
+export default class OtherPlayer extends cc.Component {
 
     private m_animation: cc.Animation = null;
     private m_boolean: boolean = false;
@@ -29,8 +28,9 @@ export default class Player extends cc.Component {
     private m_itemLayer: cc.TiledLayer = null;
 
     private m_playerSpeed: number = 4;
-    private m_joystick: Joystick = null;
+    private m_moveDirection: cc.Vec2 = cc.v2(0, 0);
 
+    
     private m_initSpriteDirection: number = 0;
 
     async onLoad() {
@@ -41,11 +41,11 @@ export default class Player extends cc.Component {
 
         this.m_playerNode = new cc.Node("playerNode");
         this.m_playerNode.setScale(2.5);
-        this.m_playerNode.zIndex = 10;
-
+        this.m_playerNode.zIndex = 11;
 
 
         let sprite = this.m_playerNode.addComponent(cc.Sprite);
+        sprite.spriteFrame = spriteLeftFrame;
 
         let rightAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/right");
         rightAnimationClip.wrapMode = cc.WrapMode.Loop;
@@ -77,27 +77,24 @@ export default class Player extends cc.Component {
 
         this.m_playerNode.setPosition(this.m_postioin);
 
-        sprite.spriteFrame = spriteLeftFrame;
         if (this.m_initSpriteDirection == 0) {
             sprite.spriteFrame = spriteRigthFrame;
         }
     }
+    
+    public initSpriteDirection(spriteDirection): void {
+        this.m_initSpriteDirection = spriteDirection;
+    }
+
 
     public setPosition(pos: cc.Vec2): void {
         this.m_postioin = pos;
     }
 
-    public initSpriteDirection(spriteDirection): void {
-        this.m_initSpriteDirection = spriteDirection;
-    }
     public setMap(map): void {
         this.m_map = map;
         this.m_wallLayer = this.m_map.getLayer("wall");
         this.m_itemLayer = this.m_map.getLayer("item");
-    }
-
-    public setJoystick(joystick: Joystick): void {
-        this.m_joystick = joystick;
     }
 
     getTilePosition(posInPixel) {
@@ -109,21 +106,15 @@ export default class Player extends cc.Component {
         return cc.v2(x, y);
     }
 
-    public putdownBomb(): void {
-        let world = this.tiledConverToWorldPos(this.getTilePosition(this.m_playerNode.getPosition()))
-        let tiled = this.getTilePosition(this.m_playerNode.getPosition());
-        if (BombManager.getInstance().contain(tiled)) {
-            return;
-        }
-        let bomb = this.node.addComponent(Bomb);
-        bomb.setBombPosition(world, tiled);
-        bomb.setItemLayer(this.m_map);
+    public updateMoveDirection(moveDirectioin: cc.Vec2): void {
+        this.m_moveDirection = moveDirectioin;
     }
+
     protected update(dt) {
         if (this.m_animation == null) {
             return;
         }
-        let direction: cc.Vec2 = this.m_joystick.getDirection();
+        let direction: cc.Vec2 = this.m_moveDirection;
         if (direction.x == 0 && direction.y == 0) {
             this.m_animation.stop();
             this.m_direction = DIRECTION.NONE;
@@ -183,7 +174,6 @@ export default class Player extends cc.Component {
      * @param nextPosition 
      */
     private moveNext(nextPosition: cc.Vec2): boolean {
-
 
         var mapSize = this.m_map.getMapSize();
         if (nextPosition.x < 0 || nextPosition.x >= mapSize.width) return false;

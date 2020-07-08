@@ -49,6 +49,15 @@ export default class Login extends cc.Component {
         NetHttp.getInstance().post(sendBuf);
     }
 
+    public onWexinClick(): void {
+        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginS");
+        let msg = msgObject.create({ account: "111111", password: "111111" })
+        let msgEncode = msgObject.encode(msg).finish();
+        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_S, msgEncode);
+        NetHttp.getInstance().post(sendBuf);
+    }
+
+
     public onToggleClick(event): void {
 
     }

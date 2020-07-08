@@ -26,6 +26,7 @@ export default class Lobby extends cc.Component {
     private addEventListener() {
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_CREATE_ROOM_R, this.onMsgRecvCreateRoom, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_JOIN_ROOM_R, this.onMsgRecvJoinRoom, this);
+        
     }
 
     private removeEventListener() {
@@ -61,7 +62,7 @@ export default class Lobby extends cc.Component {
         let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_ROOM, "joinRoomR")
         let msg = msgOC.decode(data);
         if(msg.ret == 0) {
-            
+            cc.director.loadScene("gameScene");
         }
     }
 }

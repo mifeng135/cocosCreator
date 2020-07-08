@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="16" tilewidth="40" tileheight="40" nextobjectid="4">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="16" tilewidth="40" tileheight="40" nextobjectid="6">
  <tileset firstgid="1" name="1" tilewidth="40" tileheight="40" tilecount="2" columns="1">
   <image source="pirate/新建项目 (1).png" width="40" height="80"/>
  </tileset>
@@ -71,5 +71,6 @@
  </layer>
  <objectgroup name="players">
   <object id="1" name="player1" x="20" y="20"/>
+  <object id="4" name="player2" x="780" y="620"/>
  </objectgroup>
 </map>

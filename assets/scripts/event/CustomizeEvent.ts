@@ -52,7 +52,7 @@ export default class CustomizeEvent extends cc.Component {
         let listennerDataArray = this.m_eventObjectArray[name] || [];
         for (let i = 0; i < listennerDataArray.length; i++) {
             let listennerData = listennerDataArray[i];
-            listennerData.listener.call(listennerData.object, data);
+            listennerData.listener.apply(listennerData.object, [data]);
         }
     }
 
