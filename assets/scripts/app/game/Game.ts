@@ -54,6 +54,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_START_R, this.onMsgRecvGameStart, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_R, this.onMsgRecvPlayerBombPlace, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_PLAYER_POSITION_R, this.onMsgRecvPlayerPos, this);
+        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_R, this.onMsgRecvSynPosition, this);
 
     }
 
@@ -61,6 +62,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_START_R, this.onMsgRecvGameStart);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_R, this.onMsgRecvPlayerBombPlace);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_PLAYER_POSITION_R, this.onMsgRecvPlayerPos);
+        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_R, this.onMsgRecvSynPosition);
     }
 
     onMsgRecvOtherJoinRoom(data): void {
@@ -123,7 +125,6 @@ export default class Game extends cc.Component {
     }
 
 
-
     onReadyClick(): void {
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_ROOM, "readyS");
         let msg = msgObject.create({})
@@ -172,6 +173,21 @@ export default class Game extends cc.Component {
             this.m_player.putdownBomb();
         } else {
             this.m_otherPlayer.putdownBomb();
+        }
+    }
+
+    public onMsgRecvSynPosition(data): void {
+        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerSynPositionR");
+        let msg = msgOC.decode(data);
+        let id = msg.id;
+        let x = msg.x;
+        let y = msg.y;
+
+        console.log(x)
+        if (this.m_player.getPlayerId() == id) {
+            this.m_player.updatePlayerPosition(cc.v2(x, y));
+        } else {
+            this.m_otherPlayer.updatePlayerPosition(cc.v2(x, y));
         }
     }
 }

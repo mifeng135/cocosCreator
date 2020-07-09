@@ -24,7 +24,6 @@ enum DIRECTION {
 export default class Player extends cc.Component {
 
     private m_animation: cc.Animation = null;
-    private m_boolean: boolean = false;
     private m_direction: number = DIRECTION.NONE;
 
     private m_playerNode: cc.Node = null;
@@ -93,6 +92,14 @@ export default class Player extends cc.Component {
         }
     }
 
+
+    private sendSynPosition(): void {
+        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerSynPositionS");
+        let msg = msgObject.create({ x: this.m_playerNode.x, y: this.m_playerNode.y, direction: this.m_direction });
+        let msgEncode = msgObject.encode(msg).finish();
+        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_S, msgEncode);
+        NetWebsocket.getInstance().sendMsg(sendBuf);
+    }
     public setPlayerId(id: number): void {
         this.m_playerId = id;
     }
@@ -115,6 +122,10 @@ export default class Player extends cc.Component {
 
     public setJoystick(joystick: Joystick): void {
         this.m_joystick = joystick;
+    }
+
+    public updatePlayerPosition(position: cc.Vec2): void {
+        this.m_playerNode.setPosition(position);
     }
 
     getTilePosition(posInPixel) {
@@ -162,6 +173,7 @@ export default class Player extends cc.Component {
         if (direction.x == 0 && direction.y == 0 && this.m_direction != DIRECTION.NONE) {
             this.m_animation.stop();
             this.m_direction = DIRECTION.NONE;
+            this.sendSynPosition();
             return;
         }
 

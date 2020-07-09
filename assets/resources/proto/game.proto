@@ -24,5 +24,17 @@ message playerBombPlaceS {
 	int32 y = 2;
 }
 
+message playerSynPositionS {
+	int32 x = 1;
+	int32 y = 2;
+	int32 direction = 3;
+}
+
+message playerSynPositionR {
+	int32 x = 1;
+	int32 y = 2;
+	int32 id = 3;
+	int32 direction = 4;
+}
 
 

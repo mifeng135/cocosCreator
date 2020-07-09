@@ -50,6 +50,10 @@ export default class MsgCmdConstant {
     public static MSG_CMD_PLAYER_POSITION_S = 4013;
     public static MSG_CMD_PLAYER_POSITION_R = 4014;
 
+
+    public static MSG_CMD_PLAYER_SYN_POSITION_S = 4015;
+    public static MSG_CMD_PLAYER_SYN_POSITION_R = 4016;
+
     public static MSG_CMD_GAME_END: number = 4999;
 
 }

@@ -111,7 +111,10 @@ export default class OtherPlayer extends cc.Component {
         this.m_itemLayer = this.m_map.getLayer("item");
     }
 
-    
+    public updatePlayerPosition(position: cc.Vec2): void {
+        this.m_playerNode.setPosition(position);
+    }
+
     public putdownBomb(): void {
         let tiled = this.getTilePosition(this.m_playerNode.getPosition());
         if (BombManager.getInstance().contain(tiled)) {
