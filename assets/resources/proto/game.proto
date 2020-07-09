@@ -4,12 +4,14 @@ package game;
 
 message playerPosR {
 	int32 direction = 1;
-	int32 timeStamp = 2;
+	int32 position = 2;
+	int32 id = 3;
+	int32 x = 4;
+	int32 y = 5;
 }
 
 message playerPosS {
-	int32 direction = 1;
-	int32 timeStamp = 2;
+	int32 direction = 1; 
 }
 
 message playerBombPlaceR {

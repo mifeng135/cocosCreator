@@ -43,6 +43,13 @@ export default class MsgCmdConstant {
 
     public static MSG_CMD_GAME_START_R:number = 4010;
 
+    public static MSG_CMD_PLAYER_BOMB_PLACE_S:number = 4011;
+    public static MSG_CMD_PLAYER_BOMB_PLACE_R:number = 4012;
+
+
+    public static MSG_CMD_PLAYER_POSITION_S = 4013;
+    public static MSG_CMD_PLAYER_POSITION_R = 4014;
+
     public static MSG_CMD_GAME_END: number = 4999;
 
 }

@@ -3,6 +3,11 @@ import CustomizeEvent from "../../event/CustomizeEvent";
 import Bomb from "./Bomb";
 import BombManager from "./BombManager";
 import Joystick from "../../commonUI/Joystick";
+import ProtoManager from "../../manager/ProtoManager";
+import ProtoConstant from "../../constant/ProtoConstant";
+import MsgUtil from "../../utils/MsgUtil";
+import MsgCmdConstant from "../../constant/MsgCmdConstant";
+import NetWebsocket from "../../manager/NetWebsocket";
 
 const { ccclass, property } = cc._decorator;
 
@@ -32,6 +37,11 @@ export default class Player extends cc.Component {
     private m_joystick: Joystick = null;
 
     private m_initSpriteDirection: number = 0;
+
+    private m_moveDirection: cc.Vec2 = cc.v2(0, 0);
+
+
+    private m_playerId: number = 0;
 
     async onLoad() {
 
@@ -83,6 +93,13 @@ export default class Player extends cc.Component {
         }
     }
 
+    public setPlayerId(id: number): void {
+        this.m_playerId = id;
+    }
+
+    public getPlayerId(): number {
+        return this.m_playerId;
+    }
     public setPosition(pos: cc.Vec2): void {
         this.m_postioin = pos;
     }
@@ -110,21 +127,39 @@ export default class Player extends cc.Component {
     }
 
     public putdownBomb(): void {
-        let world = this.tiledConverToWorldPos(this.getTilePosition(this.m_playerNode.getPosition()))
         let tiled = this.getTilePosition(this.m_playerNode.getPosition());
         if (BombManager.getInstance().contain(tiled)) {
             return;
         }
-        let bomb = this.node.addComponent(Bomb);
-        bomb.setBombPosition(world, tiled);
-        bomb.setItemLayer(this.m_map);
+
+        let playerPos = this.tiledConverToWorldPos(this.getTilePosition(this.m_playerNode.getPosition()))
+        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceS");
+        let msg = msgObject.create({ x: playerPos.x, y: playerPos.y });
+        let msgEncode = msgObject.encode(msg).finish();
+        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_S, msgEncode);
+        NetWebsocket.getInstance().sendMsg(sendBuf);
     }
+
+    public updateMoveDirection(direction: number): void {
+        if (direction == DIRECTION.LEFT) {
+            this.m_moveDirection = cc.v2(-1, 0);
+        } else if (direction == DIRECTION.RIGHT) {
+            this.m_moveDirection = cc.v2(1, 0);
+        } else if (direction == DIRECTION.UP) {
+            this.m_moveDirection = cc.v2(0, 1);
+        } else if (direction == DIRECTION.DOWN) {
+            this.m_moveDirection = cc.v2(0, -1);
+        } else if (direction == DIRECTION.NONE) {
+            this.m_moveDirection = cc.v2(0, 0);
+        }
+    }
+
     protected update(dt) {
         if (this.m_animation == null) {
             return;
         }
-        let direction: cc.Vec2 = this.m_joystick.getDirection();
-        if (direction.x == 0 && direction.y == 0) {
+        let direction: cc.Vec2 = this.m_moveDirection;
+        if (direction.x == 0 && direction.y == 0 && this.m_direction != DIRECTION.NONE) {
             this.m_animation.stop();
             this.m_direction = DIRECTION.NONE;
             return;
@@ -176,7 +211,6 @@ export default class Player extends cc.Component {
             }
         }
     }
-
 
     /**
      * tiled map v2

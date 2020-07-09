@@ -2,6 +2,11 @@ import Game from "./Game";
 import CustomizeEvent from "../../event/CustomizeEvent";
 import Bomb from "./Bomb";
 import BombManager from "./BombManager";
+import ProtoManager from "../../manager/ProtoManager";
+import ProtoConstant from "../../constant/ProtoConstant";
+import MsgCmdConstant from "../../constant/MsgCmdConstant";
+import MsgUtil from "../../utils/MsgUtil";
+import NetWebsocket from "../../manager/NetWebsocket";
 
 const { ccclass, property } = cc._decorator;
 
@@ -30,8 +35,10 @@ export default class OtherPlayer extends cc.Component {
     private m_playerSpeed: number = 4;
     private m_moveDirection: cc.Vec2 = cc.v2(0, 0);
 
-    
+
     private m_initSpriteDirection: number = 0;
+
+    private m_playerId: number = 0;
 
     async onLoad() {
 
@@ -81,11 +88,18 @@ export default class OtherPlayer extends cc.Component {
             sprite.spriteFrame = spriteRigthFrame;
         }
     }
-    
+
     public initSpriteDirection(spriteDirection): void {
         this.m_initSpriteDirection = spriteDirection;
     }
 
+    public setPlayerId(id: number): void {
+        this.m_playerId = id;
+    }
+
+    public getPlayerId(): number {
+        return this.m_playerId;
+    }
 
     public setPosition(pos: cc.Vec2): void {
         this.m_postioin = pos;
@@ -97,6 +111,22 @@ export default class OtherPlayer extends cc.Component {
         this.m_itemLayer = this.m_map.getLayer("item");
     }
 
+    
+    public putdownBomb(): void {
+        let tiled = this.getTilePosition(this.m_playerNode.getPosition());
+        if (BombManager.getInstance().contain(tiled)) {
+            return;
+        }
+
+        let playerPos = this.tiledConverToWorldPos(this.getTilePosition(this.m_playerNode.getPosition()))
+        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceS");
+        let msg = msgObject.create({ x: playerPos.x, y: playerPos.y });
+        let msgEncode = msgObject.encode(msg).finish();
+        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_S, msgEncode);
+        NetWebsocket.getInstance().sendMsg(sendBuf);
+    }
+
+
     getTilePosition(posInPixel) {
         let tileSize = this.m_map.getTileSize();
         let mapSize = this.m_map.getMapSize();
@@ -106,8 +136,18 @@ export default class OtherPlayer extends cc.Component {
         return cc.v2(x, y);
     }
 
-    public updateMoveDirection(moveDirectioin: cc.Vec2): void {
-        this.m_moveDirection = moveDirectioin;
+    public updateMoveDirection(direction: number): void {
+        if (direction == DIRECTION.LEFT) {
+            this.m_moveDirection = cc.v2(-1, 0);
+        } else if (direction == DIRECTION.RIGHT) {
+            this.m_moveDirection = cc.v2(1, 0);
+        } else if (direction == DIRECTION.UP) {
+            this.m_moveDirection = cc.v2(0, 1);
+        } else if (direction == DIRECTION.DOWN) {
+            this.m_moveDirection = cc.v2(0, -1);
+        } else if (direction == DIRECTION.NONE) {
+            this.m_moveDirection = cc.v2(0, 0);
+        }
     }
 
     protected update(dt) {
@@ -115,7 +155,7 @@ export default class OtherPlayer extends cc.Component {
             return;
         }
         let direction: cc.Vec2 = this.m_moveDirection;
-        if (direction.x == 0 && direction.y == 0) {
+        if (direction.x == 0 && direction.y == 0 && this.m_direction != DIRECTION.NONE) {
             this.m_animation.stop();
             this.m_direction = DIRECTION.NONE;
             return;
