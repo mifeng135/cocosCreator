@@ -87,9 +87,9 @@ export default class Player extends cc.Component {
 
         this.m_playerNode.setPosition(this.m_postioin);
 
-        sprite.spriteFrame = spriteLeftFrame;
-        if (this.m_initSpriteDirection == 0) {
-            sprite.spriteFrame = spriteRigthFrame;
+        sprite.spriteFrame = spriteRigthFrame;
+        if (this.m_initSpriteDirection == 1) {
+            sprite.spriteFrame = spriteLeftFrame;
         }
     }
 

@@ -27,10 +27,10 @@ export default class Game extends cc.Component {
 
 
     private m_player: Player = null;
-    private m_playerMapObject = null;
+    private m_playerPosition0 = null; //左上角
 
     private m_otherPlayer: OtherPlayer = null;
-    private m_otherPlayerMapObject: any = null;
+    private m_playerPosition1: any = null; //右下角
 
 
     private m_roomPlayerList: Array<any> = new Array();
@@ -46,8 +46,8 @@ export default class Game extends cc.Component {
     }
     private init(): void {
         let players = this.m_map.getObjectGroup("players");
-        this.m_playerMapObject = players.getObject("player1");
-        this.m_otherPlayerMapObject = players.getObject("player2");
+        this.m_playerPosition0 = players.getObject("player1");
+        this.m_playerPosition1 = players.getObject("player2");
     }
 
     public addEventListener(): void {
@@ -69,7 +69,7 @@ export default class Game extends cc.Component {
         this.m_roomPlayerList = msg.playerList
     }
 
-    public selfJoin(direction, position, playerId): void {
+    public addSelfPlayer(direction, position, playerId): void {
         this.m_player = this.m_map.addComponent(Player);
         this.m_player.setPosition(position);
         this.m_player.setMap(this.m_map);
@@ -78,11 +78,11 @@ export default class Game extends cc.Component {
         this.m_player.initSpriteDirection(direction);
     }
 
-    public otherJoin(direction, position, playerId): void {
+    public addOtherPlayer(direction, position, playerId): void {
         this.m_otherPlayer = this.m_map.addComponent(OtherPlayer);
         this.m_otherPlayer.setPosition(position);
         this.m_otherPlayer.setMap(this.m_map);
-        this.m_player.setPlayerId(playerId);
+        this.m_otherPlayer.setPlayerId(playerId);
         this.m_otherPlayer.initSpriteDirection(direction);
     }
 
@@ -112,12 +112,13 @@ export default class Game extends cc.Component {
                 break;
             }
         }
-        if (position == 0) { //左上角
-            this.selfJoin(1, cc.v2(this.m_otherPlayerMapObject.x, this.m_otherPlayerMapObject.y), playerId);
-            this.otherJoin(0, cc.v2(this.m_playerMapObject.x, this.m_playerMapObject.y), otherPlayerId)
+
+        if (position == 0) {
+            this.addSelfPlayer(0, cc.v2(this.m_playerPosition0.x, this.m_playerPosition0.y), playerId);
+            this.addOtherPlayer(0, cc.v2(this.m_playerPosition1.x, this.m_playerPosition1.y), otherPlayerId)
         } else {
-            this.selfJoin(0, cc.v2(this.m_playerMapObject.x, this.m_playerMapObject.y), playerId);
-            this.otherJoin(1, cc.v2(this.m_otherPlayerMapObject.x, this.m_otherPlayerMapObject.y), otherPlayerId)
+            this.addSelfPlayer(1, cc.v2(this.m_playerPosition1.x, this.m_playerPosition1.y), playerId);
+            this.addOtherPlayer(1, cc.v2(this.m_playerPosition0.x, this.m_playerPosition0.y), otherPlayerId)
         }
     }
 
