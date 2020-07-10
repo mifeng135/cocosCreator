@@ -40,6 +40,9 @@ export default class OtherPlayer extends cc.Component {
 
     private m_playerId: number = 0;
 
+
+    private m_sysArray: Array<cc.Vec2> = new Array();
+
     async onLoad() {
 
         let spriteAtlas: cc.SpriteAtlas = await this.loaderSpriteFrame();
@@ -112,7 +115,7 @@ export default class OtherPlayer extends cc.Component {
     }
 
     public updatePlayerPosition(position: cc.Vec2): void {
-        this.m_playerNode.setPosition(position);
+        this.m_sysArray.push(position);
     }
 
     public putdownBomb(): void {
@@ -157,6 +160,7 @@ export default class OtherPlayer extends cc.Component {
         if (this.m_animation == null) {
             return;
         }
+
         let direction: cc.Vec2 = this.m_moveDirection;
         if (direction.x == 0 && direction.y == 0 && this.m_direction != DIRECTION.NONE) {
             this.m_animation.stop();
@@ -180,6 +184,12 @@ export default class OtherPlayer extends cc.Component {
             this.m_direction = DIRECTION.RIGHT;
             this.m_animation.play("right");
         }
+
+        if (this.m_sysArray.length > 0) {
+            let p = this.m_sysArray.shift();
+            this.m_playerNode.position = cc.v3(p);
+        }
+        return;
 
         let nextPosition = this.m_playerNode.getPosition();
         let playerContentSize = cc.size(20, 20);

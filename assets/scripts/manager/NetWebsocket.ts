@@ -41,7 +41,6 @@ export default class NetWebsocket {
     }
 
     private onMessageListener(ev: MessageEvent): void {
-        console.timeEnd("sort");
         var dv = new DataView(ev.data);
         let cmd = dv.getInt32(0);
         let dataLength = dv.getInt32(4);
@@ -50,7 +49,6 @@ export default class NetWebsocket {
     }
 
     public sendMsg(data1): void {
-        console.time("sort");
         this.m_socket.send(data1);
     }
 }

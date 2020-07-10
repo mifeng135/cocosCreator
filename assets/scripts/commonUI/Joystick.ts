@@ -117,11 +117,11 @@ export default class Joystick extends cc.Component {
     }
 
     private sendDirectionMsg() {
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerPosS");
-        let msg = msgObject.create({ direction: this.m_directionEnum });
-        let msgEncode = msgObject.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_POSITION_S, msgEncode);
-        NetWebsocket.getInstance().sendMsg(sendBuf);
+        // let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerPosS");
+        // let msg = msgObject.create({ direction: this.m_directionEnum });
+        // let msgEncode = msgObject.encode(msg).finish();
+        // let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_POSITION_S, msgEncode);
+        // NetWebsocket.getInstance().sendMsg(sendBuf);
     }
     public getDirection(): cc.Vec2 {
         return this.m_direction;

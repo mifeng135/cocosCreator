@@ -92,8 +92,8 @@ export default class Player extends cc.Component {
         }
     }
 
-
     private sendSynPosition(): void {
+
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerSynPositionS");
         let msg = msgObject.create({ x: this.m_playerNode.x, y: this.m_playerNode.y, direction: this.m_direction });
         let msgEncode = msgObject.encode(msg).finish();
@@ -125,7 +125,7 @@ export default class Player extends cc.Component {
     }
 
     public updatePlayerPosition(position: cc.Vec2): void {
-        this.m_playerNode.setPosition(position);
+        this.m_playerNode.position = cc.v3(position);
     }
 
     getTilePosition(posInPixel) {
@@ -169,7 +169,7 @@ export default class Player extends cc.Component {
         if (this.m_animation == null) {
             return;
         }
-        let direction: cc.Vec2 = this.m_moveDirection;
+        let direction: cc.Vec2 = this.m_joystick.getDirection();
         if (direction.x == 0 && direction.y == 0 && this.m_direction != DIRECTION.NONE) {
             this.m_animation.stop();
             this.m_direction = DIRECTION.NONE;
@@ -201,18 +201,21 @@ export default class Player extends cc.Component {
             nextPosition = this.getTilePosition(nextPosition);
             if (this.moveNext(nextPosition)) {
                 this.m_playerNode.x = this.m_playerNode.x - this.m_playerSpeed;
+                this.sendSynPosition()
             }
         } else if (this.m_direction == DIRECTION.RIGHT) {
             nextPosition.x = nextPosition.x + this.m_playerSpeed + playerContentSize.width;
             nextPosition = this.getTilePosition(nextPosition);
             if (this.moveNext(nextPosition)) {
                 this.m_playerNode.x = this.m_playerNode.x + this.m_playerSpeed;
+                this.sendSynPosition()
             }
         } else if (this.m_direction == DIRECTION.UP) {
             nextPosition.y = nextPosition.y + this.m_playerSpeed + playerContentSize.height;
             nextPosition = this.getTilePosition(nextPosition);
             if (this.moveNext(nextPosition)) {
                 this.m_playerNode.y = this.m_playerNode.y + this.m_playerSpeed;
+                this.sendSynPosition()
             }
 
         } else if (this.m_direction == DIRECTION.DOWN) {
@@ -220,6 +223,7 @@ export default class Player extends cc.Component {
             nextPosition = this.getTilePosition(nextPosition);
             if (this.moveNext(nextPosition)) {
                 this.m_playerNode.y = this.m_playerNode.y - this.m_playerSpeed;
+                this.sendSynPosition()
             }
         }
     }

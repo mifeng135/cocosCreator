@@ -182,12 +182,13 @@ export default class Game extends cc.Component {
         let id = msg.id;
         let x = msg.x;
         let y = msg.y;
-
-        console.log(x)
+        let direction = msg.direction;
         if (this.m_player.getPlayerId() == id) {
             this.m_player.updatePlayerPosition(cc.v2(x, y));
+            this.m_player.updateMoveDirection(direction);
         } else {
             this.m_otherPlayer.updatePlayerPosition(cc.v2(x, y));
+            this.m_otherPlayer.updateMoveDirection(direction);
         }
     }
 }
