@@ -64,7 +64,7 @@ export default class Player extends cc.Component {
         let spriteRigthFrame = spriteAtlas.getSpriteFrame(this.m_frameName);
 
         this.m_playerNode = new cc.Node("playerNode");
-        if(this.m_roleSuffix === "yellow_") {
+        if (this.m_roleSuffix === "yellow_") {
             this.m_playerNode.scale = 0.8
         }
         this.m_playerNode.zIndex = 10;
@@ -94,7 +94,7 @@ export default class Player extends cc.Component {
         this.m_playerNode.setPosition(this.m_postioin);
 
         sprite.spriteFrame = spriteRigthFrame;
-        if(this.m_initSpriteDirection == 1) {
+        if (this.m_initSpriteDirection == 1) {
             this.m_playerNode.scaleX = -1;
         }
     }
@@ -195,7 +195,13 @@ export default class Player extends cc.Component {
             return;
         }
 
-        let playerPos = this.tiledConverToWorldPos(this.getTilePosition(this.m_playerNode.getPosition()))
+
+        let tileSize = this.m_map.getTileSize();
+        let mapSize = this.m_map.getMapSize();
+        let x = tiled.x * tileSize.width + tileSize.width / 2;
+        let y = (mapSize.height - tiled.y) * tileSize.height - tileSize.height / 2;
+
+        let playerPos = cc.v2(x, y)
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceS");
         let msg = msgObject.create({ x: playerPos.x, y: playerPos.y });
         let msgEncode = msgObject.encode(msg).finish();
@@ -353,7 +359,7 @@ export default class Player extends cc.Component {
             return this.forceMoveDirection(itemBox, playerBox, outBox);
         }
 
-        if (BombManager.getInstance().collide(this.tiledConverToWorldPos(titedPosition))) {
+        if (BombManager.getInstance().collide(playerBox)) {
             return false;
         }
         return true;
@@ -404,6 +410,18 @@ export default class Player extends cc.Component {
         return cc.v2(x, y);
     }
 
+
+    public removeItemBox(tiledPos: cc.Vec2): void {
+        let worldPos = this.tiledConverToWorldPos(tiledPos);
+        let tiledSize = this.m_map.getTileSize();
+        for (let i = 0; i < this.m_itemBox.length; i++) {
+            let rect = this.m_itemBox[i]
+            if (rect.x == worldPos.x - tiledSize.width / 2 && rect.y == worldPos.y - tiledSize.height) {
+                this.m_itemBox.splice(i, 1);
+                break;
+            }
+        }
+    }
     public loaderRes(animationName: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             cc.loader.loadRes(animationName, cc.AnimationClip, (error, res) => {

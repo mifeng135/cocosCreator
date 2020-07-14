@@ -57,13 +57,12 @@ export default class BombManager {
         }
         return null;
     }
-    public collide(pos: cc.Vec2): boolean {
+    public collide(playerRect: cc.Rect): boolean {
         for (let i = 0; i < this.m_bombList.length; i++) {
             let bomb: Bomb = this.m_bombList[i];
             let bombNodePosition = bomb.getBombNode().getPosition();
             let checkCollide = bomb.getCheckCollide();
-            let rect = cc.rect(bombNodePosition.x, bombNodePosition.y, 20, 20);
-            let playerRect = cc.rect(pos.x, pos.y, 20, 20);
+            let rect = cc.rect(bombNodePosition.x, bombNodePosition.y, 40, 40);
             if (cc.Intersection.rectRect(rect, playerRect) && checkCollide) {
                 return true;
             }

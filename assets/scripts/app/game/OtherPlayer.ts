@@ -130,7 +130,8 @@ export default class OtherPlayer extends cc.Component {
             return;
         }
 
-        let playerPos = this.tiledConverToWorldPos(this.getTilePosition(this.m_playerNode.getPosition()))
+        
+        let playerPos = this.tiledConverToWorldPos(tiled)
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceS");
         let msg = msgObject.create({ x: playerPos.x, y: playerPos.y });
         let msgEncode = msgObject.encode(msg).finish();
@@ -201,8 +202,8 @@ export default class OtherPlayer extends cc.Component {
     private tiledConverToWorldPos(pos: cc.Vec2): cc.Vec2 {
         let tileSize = this.m_map.getTileSize();
         let mapSize = this.m_map.getMapSize();
-        let x = pos.x * tileSize.width + 20;
-        let y = (mapSize.height - pos.y) * tileSize.height - 20;
+        let x = pos.x * tileSize.width + tileSize.width / 2;
+        let y = (mapSize.height - pos.y) * tileSize.height;
         return cc.v2(x, y);
     }
 

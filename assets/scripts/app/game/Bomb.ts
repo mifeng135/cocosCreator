@@ -1,4 +1,5 @@
 import BombManager from "./BombManager";
+import Player from "./Player";
 
 const { ccclass, property } = cc._decorator;
 
@@ -20,20 +21,18 @@ export default class Bomb extends cc.Component {
 
     private m_bombPower: number = 2;
 
-    private m_leftPath: Array<cc.Vec2> = new Array();
-    private m_rightPath: Array<cc.Vec2> = new Array();
-    private m_downPath: Array<cc.Vec2> = new Array();
-    private m_upPath: Array<cc.Vec2> = new Array();
-    private m_removeTiledPath: Array<cc.Vec2> = new Array();
+    private m_removeTiledPath: Array<cc.Vec2> = new Array(); // 雷爆炸的时候 需要移除的item
 
     private m_bombSpriteAtlas: cc.SpriteAtlas = null;
     private m_bombSpriteNodeArray: Array<cc.Node> = new Array();
 
 
-
     private m_bombExplodeList: Array<Bomb> = new Array();
     private m_checkBombList: Array<Bomb> = new Array();
     private m_copyBombList: Array<Bomb> = new Array();
+
+
+    private m_playerComponent: Player = null;
 
 
     async onLoad() {
@@ -45,7 +44,7 @@ export default class Bomb extends cc.Component {
 
         this.m_bombNode = new cc.Node("bombNode");
         this.m_bombNode.zIndex = 9;
-        this.m_bombNode.scale = 0.8;
+        this.m_bombNode.scale = 1.5;
 
         let sprite = this.m_bombNode.addComponent(cc.Sprite);
         sprite.spriteFrame = spriteFrame;
@@ -79,6 +78,8 @@ export default class Bomb extends cc.Component {
 
         this.m_checkBombList.push(this);
         this.m_bombExplodeList.push(this);
+
+
         this.caleExplodeBombList();
         this.removeBomb();
         this.findPath();
@@ -103,6 +104,10 @@ export default class Bomb extends cc.Component {
         this.m_itemLayer = this.m_map.getLayer("item");
     }
 
+
+    public setPlayer(player: Player): void {
+        this.m_playerComponent = player;
+    }
 
     /**
      * 递归检测哪些雷要爆炸
@@ -224,25 +229,27 @@ export default class Bomb extends cc.Component {
      * 检测可以爆炸的路径精灵
      */
     private findPath() {
-        this.m_leftPath.length = 0;
-        this.m_rightPath.length = 0;
-        this.m_upPath.length = 0;
-        this.m_downPath.length = 0;
         this.m_removeTiledPath.length = 0;
         this.m_bombSpriteNodeArray.length = 0;
 
-
+        let bombPath: Array<any> = new Array();
 
         for (let index = 0; index < this.m_bombExplodeList.length; index++) {
             let bomb: Bomb = this.m_bombExplodeList[index];
             let bombTiledPos = bomb.getTiledPosition();
 
-
-
             let leftBreak = false;
             let rightBreak = false;
             let upBreak = false;
             let downBreak = false;
+
+
+            let oneBombPath = {}
+            oneBombPath["left"] = new Array();
+            oneBombPath["right"] = new Array();
+            oneBombPath["up"] = new Array();
+            oneBombPath["down"] = new Array();
+
 
             for (let i = 1; i <= this.m_bombPower; i++) {
 
@@ -253,32 +260,33 @@ export default class Bomb extends cc.Component {
                 let downV = cc.v2(bombTiledPos.x, bombTiledPos.y + i);
 
                 if (this.checkAround(leftV, leftBreak) && !leftBreak) {
-                    this.m_leftPath.push(leftV);
+                    oneBombPath["left"].push(leftV);
                 } else {
                     leftBreak = true;
                 }
 
                 if (this.checkAround(rightV, rightBreak) && !rightBreak) {
-                    this.m_rightPath.push(rightV);
+                    oneBombPath["right"].push(rightV);
                 } else {
                     rightBreak = true;
                 }
 
                 if (this.checkAround(upV, upBreak) && !upBreak) {
-                    this.m_upPath.push(upV);
+                    oneBombPath["up"].push(upV);
                 } else {
                     upBreak = true;
                 }
 
                 if (this.checkAround(downV, downBreak) && !downBreak) {
-                    this.m_downPath.push(downV);
+                    oneBombPath["down"].push(downV);
                 } else {
                     downBreak = true;
                 }
             }
+            bombPath.push(oneBombPath);
         }
 
-        this.createBombSprite();
+        this.createBombSprite(bombPath);
     }
 
     private checkAround(nextPosition, flag) {
@@ -287,7 +295,7 @@ export default class Bomb extends cc.Component {
         if (nextPosition.y < 0 || nextPosition.y >= mapSize.height) return false;
 
         if (this.m_itemLayer.getTileGIDAt(nextPosition)) {
-            if(!flag) {
+            if (!flag) {
                 this.m_removeTiledPath.push(nextPosition);
             }
             return false;
@@ -319,27 +327,59 @@ export default class Bomb extends cc.Component {
         return this.m_bombTiledPos;
     }
 
-    public createBombSprite(): void {
+    public createBombSprite(bombPath): void {
         this.createSpriteBomb(this.m_bombTiledPos, "center", 0);
-        for (let i = 0; i < this.m_leftPath.length; i++) {
-            let position = this.m_leftPath[i];
-            this.createSpriteBomb(position, "left", i);
+
+
+
+        for (let i = 0; i < bombPath.length; i++) {
+            let oneBombPath = bombPath[i];
+
+            let leftPath = oneBombPath["left"];
+            let rightPath = oneBombPath["right"];
+            let upPath = oneBombPath["up"];
+            let downPath = oneBombPath["down"];
+
+
+
+            for (let i = 0; i < leftPath.length; i++) {
+                let position = leftPath[i];
+                if (i == leftPath.length - 1) {
+                    this.createSpriteBomb(position, "left_end", i);
+                } else {
+                    this.createSpriteBomb(position, "left", i);
+                }
+            }
+
+            for (let i = 0; i < rightPath.length; i++) {
+                let position = rightPath[i];
+                if (i == rightPath.length - 1) {
+                    this.createSpriteBomb(position, "right_end", i);
+                } else {
+                    this.createSpriteBomb(position, "right", i);
+                }
+            }
+
+            for (let i = 0; i < upPath.length; i++) {
+                let position = upPath[i];
+                if (i == upPath.length - 1) {
+                    this.createSpriteBomb(position, "up_end", i);
+                } else {
+                    this.createSpriteBomb(position, "up", i);
+                }
+            }
+
+            for (let i = 0; i < downPath.length; i++) {
+                let position = downPath[i];
+                if (i == downPath.length - 1) {
+                    this.createSpriteBomb(position, "down_end", i);
+                } else {
+                    this.createSpriteBomb(position, "down", i);
+                }
+            }
         }
 
-        for (let i = 0; i < this.m_rightPath.length; i++) {
-            let position = this.m_rightPath[i];
-            this.createSpriteBomb(position, "right", i);
-        }
 
-        for (let i = 0; i < this.m_downPath.length; i++) {
-            let position = this.m_downPath[i];
-            this.createSpriteBomb(position, "down", i);
-        }
-
-        for (let i = 0; i < this.m_upPath.length; i++) {
-            let position = this.m_upPath[i];
-            this.createSpriteBomb(position, "up", i);
-        }
 
         this.scheduleOnce(this.remveTiled.bind(this), 0.08 * this.m_bombPower)
 
@@ -350,20 +390,18 @@ export default class Bomb extends cc.Component {
         for (let i = 0; i < this.m_removeTiledPath.length; i++) {
             let position = this.m_removeTiledPath[i];
             this.m_itemLayer.setTileGIDAt(0, position, 0);
+            this.m_playerComponent.removeItemBox(position);
         }
     }
 
     private createSpriteBomb(position: cc.Vec2, spirteFrame: string, index: number): void {
         let worldPosition = this.tiledTranlateToWorldPos(position);
         let bomeSpriteNode = new cc.Node("bomeSprite");
-        bomeSpriteNode.opacity = 0;
         let sprite = bomeSpriteNode.addComponent(cc.Sprite);
         sprite.spriteFrame = this.m_bombSpriteAtlas.getSpriteFrame(spirteFrame);
         bomeSpriteNode.setPosition(worldPosition);
         this.m_bombSpriteNodeArray.push(bomeSpriteNode);
         this.node.addChild(bomeSpriteNode);
-        let fadein = cc.fadeIn(index * 0.08);
-        bomeSpriteNode.runAction(fadein);
     }
 
     private clearBombSpriteArray(): void {
@@ -378,8 +416,8 @@ export default class Bomb extends cc.Component {
     private tiledTranlateToWorldPos(pos: cc.Vec2): cc.Vec2 {
         let tileSize = this.m_map.getTileSize();
         let mapSize = this.m_map.getMapSize();
-        let x = pos.x * tileSize.width + 20;
-        let y = (mapSize.height - pos.y) * tileSize.height - 20;
+        let x = pos.x * tileSize.width + tileSize.width / 2;
+        let y = (mapSize.height - pos.y) * tileSize.height - tileSize.height / 2;
         return cc.v2(x, y);
     }
 

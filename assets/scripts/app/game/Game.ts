@@ -157,6 +157,7 @@ export default class Game extends cc.Component {
         let bomb = this.m_map.addComponent(Bomb);
         bomb.setBombPosition(position, tiled);
         bomb.setItemLayer(this.m_map);
+        bomb.setPlayer(this.m_player);
     }
 
     private getTilePosition(posInPixel) {

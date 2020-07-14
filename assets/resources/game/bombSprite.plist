@@ -7,119 +7,119 @@
             <key>center.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{86,86},{40,40}}</string>
+                <string>{{134,134},{64,68}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{40,40}}</string>
+                <string>{{0,0},{64,68}}</string>
                 <key>sourceSize</key>
-                <string>{40,40}</string>
+                <string>{64,68}</string>
             </dict>
             <key>down.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{86,44},{40,40}}</string>
+                <string>{{134,68},{64,68}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
-                <false/>
+                <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{40,40}}</string>
+                <string>{{0,0},{64,68}}</string>
                 <key>sourceSize</key>
-                <string>{40,40}</string>
+                <string>{64,68}</string>
             </dict>
             <key>down_end.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{44,86},{40,40}}</string>
+                <string>{{68,138},{64,68}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{40,40}}</string>
+                <string>{{0,0},{64,68}}</string>
                 <key>sourceSize</key>
-                <string>{40,40}</string>
+                <string>{64,68}</string>
             </dict>
             <key>left.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{44,44},{40,40}}</string>
+                <string>{{68,68},{64,68}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{40,40}}</string>
+                <string>{{0,0},{64,68}}</string>
                 <key>sourceSize</key>
-                <string>{40,40}</string>
+                <string>{64,68}</string>
             </dict>
             <key>left_end.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{86,2},{40,40}}</string>
+                <string>{{138,2},{64,68}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
-                <false/>
+                <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{40,40}}</string>
+                <string>{{0,0},{64,68}}</string>
                 <key>sourceSize</key>
-                <string>{40,40}</string>
+                <string>{64,68}</string>
             </dict>
             <key>right.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{44,2},{40,40}}</string>
+                <string>{{68,2},{64,68}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
-                <false/>
+                <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{40,40}}</string>
+                <string>{{0,0},{64,68}}</string>
                 <key>sourceSize</key>
-                <string>{40,40}</string>
+                <string>{64,68}</string>
             </dict>
             <key>right_end.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,86},{40,40}}</string>
+                <string>{{2,142},{64,68}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{40,40}}</string>
+                <string>{{0,0},{64,68}}</string>
                 <key>sourceSize</key>
-                <string>{40,40}</string>
+                <string>{64,68}</string>
             </dict>
             <key>up.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,44},{40,40}}</string>
+                <string>{{2,72},{64,68}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{40,40}}</string>
+                <string>{{0,0},{64,68}}</string>
                 <key>sourceSize</key>
-                <string>{40,40}</string>
+                <string>{64,68}</string>
             </dict>
             <key>up_end.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,2},{40,40}}</string>
+                <string>{{2,2},{64,68}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{40,40}}</string>
+                <string>{{0,0},{64,68}}</string>
                 <key>sourceSize</key>
-                <string>{40,40}</string>
+                <string>{64,68}</string>
             </dict>
         </dict>
         <key>metadata</key>
@@ -129,9 +129,9 @@
             <key>realTextureFileName</key>
             <string>bombSprite.png</string>
             <key>size</key>
-            <string>{128,128}</string>
+            <string>{256,256}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:9610318ceb8a0aa8ca1e0a4356277123:5131e41eecb1f1838435f19d7a232ec9:54ef301687bdd17f0f52292e9b0e1a8b$</string>
+            <string>$TexturePacker:SmartUpdate:364e2aed8129826d3af0293d3fcd20eb:0ed5bd0ac5c2d3cb7a9cd4b64263e330:54ef301687bdd17f0f52292e9b0e1a8b$</string>
             <key>textureFileName</key>
             <string>bombSprite.png</string>
         </dict>
