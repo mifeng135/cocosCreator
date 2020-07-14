@@ -23,7 +23,6 @@ enum DIRECTION {
 export default class OtherPlayer extends cc.Component {
 
     private m_animation: cc.Animation = null;
-    private m_boolean: boolean = false;
     private m_direction: number = DIRECTION.NONE;
 
     private m_playerNode: cc.Node = null;
@@ -43,43 +42,39 @@ export default class OtherPlayer extends cc.Component {
 
     private m_sysArray: Array<cc.Vec2> = new Array();
 
-    async onLoad() {
+    private m_roleSuffix: string = "yellow_"
+    private m_frameName: string = "yellow_standright";
+    private m_frameFileName: string = "game/role/yellow";
 
-        let spriteAtlas: cc.SpriteAtlas = await this.loaderSpriteFrame();
-        let spriteRigthFrame = spriteAtlas.getSpriteFrame("man_standright0")
-        let spriteLeftFrame = spriteAtlas.getSpriteFrame("man_standleft0")
+    onLoad() {
+
+    }
+
+    async start(): Promise<void>  {
+        let spriteAtlas: cc.SpriteAtlas = await this.loaderSpriteFrame(this.m_frameFileName);
+        let spriteRigthFrame = spriteAtlas.getSpriteFrame(this.m_frameName)
 
         this.m_playerNode = new cc.Node("playerNode");
-        this.m_playerNode.setScale(2.5);
+        if(this.m_roleSuffix === "yellow_") {
+            this.m_playerNode.scale = 0.8
+        }
         this.m_playerNode.zIndex = 11;
 
 
         let sprite = this.m_playerNode.addComponent(cc.Sprite);
-        sprite.spriteFrame = spriteLeftFrame;
-
-        let rightAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/right");
+        sprite.spriteFrame = spriteRigthFrame;
+        let rightAnimationClip: cc.AnimationClip = await this.loaderRes("game/role/animation/" + this.m_roleSuffix + "right");
         rightAnimationClip.wrapMode = cc.WrapMode.Loop;
-        rightAnimationClip.speed = 2.5;
 
-
-        let leftAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/left");
-        leftAnimationClip.wrapMode = cc.WrapMode.Loop;
-        leftAnimationClip.speed = 2.5;
-
-        let upAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/up");
+        let upAnimationClip: cc.AnimationClip = await this.loaderRes("game/role/animation/" + this.m_roleSuffix + "up");
         upAnimationClip.wrapMode = cc.WrapMode.Loop;
-        upAnimationClip.speed = 2.5;
 
-
-        let downAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/down");
+        let downAnimationClip: cc.AnimationClip = await this.loaderRes("game/role/animation/" + this.m_roleSuffix + "down");
         downAnimationClip.wrapMode = cc.WrapMode.Loop;
-        downAnimationClip.speed = 2.5;
 
         this.m_animation = this.m_playerNode.addComponent(cc.Animation);
 
-
         this.m_animation.addClip(rightAnimationClip);
-        this.m_animation.addClip(leftAnimationClip);
         this.m_animation.addClip(upAnimationClip);
         this.m_animation.addClip(downAnimationClip);
 
@@ -87,11 +82,10 @@ export default class OtherPlayer extends cc.Component {
 
         this.m_playerNode.setPosition(this.m_postioin);
 
-        if (this.m_initSpriteDirection == 1) {
-            sprite.spriteFrame = spriteRigthFrame;
+        if(this.m_initSpriteDirection == 1) {
+            this.m_playerNode.scaleX = -1;
         }
     }
-
     public initSpriteDirection(spriteDirection): void {
         this.m_initSpriteDirection = spriteDirection;
     }
@@ -112,6 +106,18 @@ export default class OtherPlayer extends cc.Component {
         this.m_map = map;
         this.m_wallLayer = this.m_map.getLayer("wall");
         this.m_itemLayer = this.m_map.getLayer("item");
+    }
+
+    public setRoleImageType(type: number): void {
+        if (type == 1) {
+            this.m_roleSuffix = "yellow_";
+            this.m_frameFileName = "game/role/yellow";
+            this.m_frameName = "yellow_standright";
+        } else {
+            this.m_roleSuffix = "";
+            this.m_frameName = "red_standright";
+            this.m_frameFileName = "game/role/red";
+        }
     }
 
     public updatePlayerPosition(position: cc.Vec2): void {
@@ -170,209 +176,28 @@ export default class OtherPlayer extends cc.Component {
 
         if (direction.y == 1 && this.m_direction != DIRECTION.UP) {
             this.m_direction = DIRECTION.UP;
-            this.m_animation.play("up");
+            this.m_animation.play(this.m_roleSuffix + "up");
         }
         if (direction.y == -1 && this.m_direction != DIRECTION.DOWN) {
             this.m_direction = DIRECTION.DOWN;
-            this.m_animation.play("down");
+            this.m_animation.play(this.m_roleSuffix + "down");
         }
         if (direction.x == -1 && this.m_direction != DIRECTION.LEFT) {
             this.m_direction = DIRECTION.LEFT;
-            this.m_animation.play("left");
+            this.m_animation.play(this.m_roleSuffix + "right");
+            this.m_playerNode.scaleX = -1;
         }
         if (direction.x == 1 && this.m_direction != DIRECTION.RIGHT) {
             this.m_direction = DIRECTION.RIGHT;
-            this.m_animation.play("right");
+            this.m_animation.play(this.m_roleSuffix + "right");
+            this.m_playerNode.scaleX = 1;
         }
 
         if (this.m_sysArray.length > 0) {
             let p = this.m_sysArray.shift();
             this.m_playerNode.position = cc.v3(p);
         }
-        return;
-
-        let nextPosition = this.m_playerNode.getPosition();
-        let playerContentSize = cc.size(20, 20);
-        if (this.m_direction == DIRECTION.LEFT) {
-            nextPosition.x = nextPosition.x - this.m_playerSpeed - playerContentSize.width;
-            nextPosition = this.getTilePosition(nextPosition);
-            if (this.moveNext(nextPosition)) {
-                this.m_playerNode.x = this.m_playerNode.x - this.m_playerSpeed;
-            }
-        } else if (this.m_direction == DIRECTION.RIGHT) {
-            nextPosition.x = nextPosition.x + this.m_playerSpeed + playerContentSize.width;
-            nextPosition = this.getTilePosition(nextPosition);
-            if (this.moveNext(nextPosition)) {
-                this.m_playerNode.x = this.m_playerNode.x + this.m_playerSpeed;
-            }
-        } else if (this.m_direction == DIRECTION.UP) {
-            nextPosition.y = nextPosition.y + this.m_playerSpeed + playerContentSize.height;
-            nextPosition = this.getTilePosition(nextPosition);
-            if (this.moveNext(nextPosition)) {
-                this.m_playerNode.y = this.m_playerNode.y + this.m_playerSpeed;
-            }
-
-        } else if (this.m_direction == DIRECTION.DOWN) {
-            nextPosition.y = nextPosition.y - this.m_playerSpeed - playerContentSize.height;
-            nextPosition = this.getTilePosition(nextPosition);
-            if (this.moveNext(nextPosition)) {
-                this.m_playerNode.y = this.m_playerNode.y - this.m_playerSpeed;
-            }
-        }
     }
-
-
-    /**
-     * tiled map v2
-     * @param nextPosition 
-     */
-    private moveNext(nextPosition: cc.Vec2): boolean {
-
-        var mapSize = this.m_map.getMapSize();
-        if (nextPosition.x < 0 || nextPosition.x >= mapSize.width) return false;
-        if (nextPosition.y < 0 || nextPosition.y >= mapSize.height) return false;
-
-        if (this.m_wallLayer.getTileGIDAt(nextPosition) || this.m_itemLayer.getTileGIDAt(nextPosition)) {
-            return false;
-        }
-
-        let off = 19;
-        let offMove = 15;
-        let playerPos = this.m_playerNode.getPosition();
-
-        if (this.m_direction == DIRECTION.DOWN) {
-
-            let firstPos = cc.v2(nextPosition.x + 1, nextPosition.y);  // 右侧
-            let firstPosition = this.tiledConverToWorldPos(firstPos);
-            let firstRect = cc.rect(firstPosition.x - 20, firstPosition.y - 20, 40, 40);
-
-            let secondPos = cc.v2(nextPosition.x - 1, nextPosition.y); // 左侧
-            let secondPosition = this.tiledConverToWorldPos(secondPos);
-            let secondRect = cc.rect(secondPosition.x - 20, secondPosition.y - 20, 40, 40);
-
-            let leftBottom = cc.v2(playerPos.x - off, playerPos.y - off);
-            let rightBottom = cc.v2(playerPos.x + off, playerPos.y - off);
-
-
-            if (firstRect.contains(rightBottom) && this.m_itemLayer.getTileGIDAt(firstPos)) {
-                let off = Math.abs(firstPosition.x - firstRect.width / 2 - rightBottom.x);
-                if (off <= offMove) {
-                    this.m_playerNode.x = this.m_playerNode.x - off;
-                    return true;
-                }
-                return false;
-            }
-
-            if (secondRect.contains(leftBottom) && this.m_itemLayer.getTileGIDAt(secondPos)) {
-                let off = Math.abs(secondPosition.x + secondRect.width / 2 - leftBottom.x);
-                if (off <= offMove) {
-                    this.m_playerNode.x = this.m_playerNode.x + off;
-                    return true;
-                }
-                return false;
-            }
-
-        } else if (this.m_direction == DIRECTION.UP) {
-
-            let firstPos = cc.v2(nextPosition.x + 1, nextPosition.y); // 右侧
-            let firstPosition = this.tiledConverToWorldPos(firstPos);
-            let firstRect = cc.rect(firstPosition.x - 20, firstPosition.y - 20, 40, 40);
-
-            let secondPos = cc.v2(nextPosition.x - 1, nextPosition.y); //左侧
-            let secondPosition = this.tiledConverToWorldPos(secondPos);
-            let secondRect = cc.rect(secondPosition.x - 20, secondPosition.y - 20, 40, 40);
-
-            let leftTop = cc.v2(playerPos.x - off, playerPos.y + off);
-            let rightTop = cc.v2(playerPos.x + off, playerPos.y + off);
-
-            if (firstRect.contains(rightTop) && this.m_itemLayer.getTileGIDAt(firstPos)) {
-                let off = Math.abs(firstPosition.x - firstRect.width / 2 - rightTop.x);
-                if (off <= offMove) {
-                    this.m_playerNode.x = this.m_playerNode.x - off;
-                    return true;
-                }
-                return false;
-            }
-
-            if (secondRect.contains(leftTop) && this.m_itemLayer.getTileGIDAt(secondPos)) {
-                let off = Math.abs(secondPosition.x + secondRect.width / 2 - leftTop.x);
-                if (off <= offMove) {
-                    this.m_playerNode.x = this.m_playerNode.x + off;
-                    return true;
-                }
-                return false;
-            }
-        } else if (this.m_direction == DIRECTION.LEFT) {
-
-            let firstPos = cc.v2(nextPosition.x, nextPosition.y + 1); //下
-            let firstPosition = this.tiledConverToWorldPos(firstPos);
-            let firstRect = cc.rect(firstPosition.x - 20, firstPosition.y - 20, 40, 40);
-
-            let secondPos = cc.v2(nextPosition.x, nextPosition.y - 1); //上
-            let secondPosition = this.tiledConverToWorldPos(secondPos);
-            let secondRect = cc.rect(secondPosition.x - 20, secondPosition.y - 20, 40, 40);
-
-            let leftTop = cc.v2(playerPos.x - off, playerPos.y + off);
-            let leftBottom = cc.v2(playerPos.x - off, playerPos.y - off);
-
-
-            if (firstRect.contains(leftBottom) && this.m_itemLayer.getTileGIDAt(firstPos)) {
-                let off = Math.abs(firstRect.height / 2 + firstPosition.y - leftBottom.y);
-                if (off <= offMove) {
-                    this.m_playerNode.y = this.m_playerNode.y + off;
-                    return true;
-                }
-                return false;
-            }
-
-            if (secondRect.contains(leftTop) && this.m_itemLayer.getTileGIDAt(secondPos)) {
-                let off = Math.abs(secondPosition.y - secondRect.height / 2 - leftTop.y);
-                if (off <= offMove) {
-                    this.m_playerNode.y = this.m_playerNode.y - off;
-                    return true;
-                }
-                return false;
-            }
-
-        } else if (this.m_direction == DIRECTION.RIGHT) {
-
-            let firstPos = cc.v2(nextPosition.x, nextPosition.y + 1); //下
-            let firstPosition = this.tiledConverToWorldPos(firstPos);
-            let firstRect = cc.rect(firstPosition.x - 20, firstPosition.y - 20, 40, 40);
-
-            let secondPos = cc.v2(nextPosition.x, nextPosition.y - 1); //上
-            let secondPosition = this.tiledConverToWorldPos(secondPos);
-            let secondRect = cc.rect(secondPosition.x - 20, secondPosition.y - 20, 40, 40);
-
-            let rightTop = cc.v2(playerPos.x + off, playerPos.y + off);
-            let rightBottom = cc.v2(playerPos.x + off, playerPos.y - off);
-
-
-            if (firstRect.contains(rightBottom) && this.m_itemLayer.getTileGIDAt(firstPos)) {
-                let off = Math.abs(firstPosition.y + firstRect.height / 2 - rightBottom.y);
-                if (off <= offMove) {
-                    this.m_playerNode.y = this.m_playerNode.y + off;
-                    return true;
-                }
-                return false;
-            }
-
-            if (secondRect.contains(rightTop) && this.m_itemLayer.getTileGIDAt(secondPos)) {
-                let off = Math.abs(secondPosition.y - secondRect.height / 2 - rightTop.y);
-                if (off <= offMove) {
-                    this.m_playerNode.y = this.m_playerNode.y - off;
-                    return true;
-                }
-                return false;
-            }
-        }
-
-        if (BombManager.getInstance().collide(this.tiledConverToWorldPos(nextPosition))) {
-            return false;
-        }
-        return true;
-    }
-
     private tiledConverToWorldPos(pos: cc.Vec2): cc.Vec2 {
         let tileSize = this.m_map.getTileSize();
         let mapSize = this.m_map.getMapSize();
@@ -392,9 +217,9 @@ export default class OtherPlayer extends cc.Component {
         });
     }
 
-    public loaderSpriteFrame(): Promise<any> {
+    public loaderSpriteFrame(name: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            cc.loader.loadRes("game/man", cc.SpriteAtlas, (error, res) => {
+            cc.loader.loadRes(name, cc.SpriteAtlas, (error, res) => {
                 if (error) {
                     reject(error);
                 }

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="68" tileheight="64" nextobjectid="25">
+ <tileset firstgid="1" name="senlin" tilewidth="68" tileheight="64" tilecount="39" columns="3">
+  <image source="senlin.png" width="204" height="832"/>
+  <tile id="3">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="block" value="1"/>
+    <property name="move" value="1"/>
+   </properties>
+  </tile>
+  <tile id="7">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="hide" value="1"/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="bg" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAfcA0QlkBi8xFQy4dDHzUxuhsIuWmo+5cYDADx4wWX
+  </data>
+ </layer>
+ <layer name="item" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYBh8gJNMfRxImBz70Gli7cRGE2MOJfbC7CLHv+j20wIAAKQ0AJo=
+  </data>
+ </layer>
+ <layer name="wall" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAMcAOxCAmYG4s+EGABYg4gZoPy2aB8FigfXT+yXjYkdTDAgmQWslp0e1mR1DDgEIfZy4MkTywQgeqjxF50P1DiX1LDmdz4BQCFowUx
+  </data>
+ </layer>
+ <layer name="fg" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYIAAQRIwMkAWY4TSzGg0Ixa16HxmJHUwwIhkBj69TEhiDDjE0fWSAqhpLzX8S2o4I4uRGr/kAgCw5AOd
+  </data>
+ </layer>
+ <objectgroup name="players">
+  <object id="1" name="player1" x="241" y="154">
+   <properties>
+    <property name="playertype" value="player"/>
+   </properties>
+  </object>
+  <object id="24" name="player2" x="782" y="540"/>
+ </objectgroup>
+</map>

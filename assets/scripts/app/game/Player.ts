@@ -42,43 +42,50 @@ export default class Player extends cc.Component {
 
     private m_playerId: number = 0;
 
-    async onLoad() {
+    private m_drawNode: cc.Graphics = null;
 
-        let spriteAtlas: cc.SpriteAtlas = await this.loaderSpriteFrame();
-        let spriteRigthFrame = spriteAtlas.getSpriteFrame("man_standright0")
-        let spriteLeftFrame = spriteAtlas.getSpriteFrame("man_standleft0")
+    private m_playerDrawNode: cc.Graphics = null;
+
+
+    private m_itemBox: Array<cc.Rect> = new Array();
+
+    private m_roleSuffix: string = ""
+    private m_frameName: string = "red_standright";
+    private m_frameFileName: string = "game/role/red";
+
+
+    onLoad() {
+
+    }
+
+
+    async start(): Promise<void> {
+        let spriteAtlas: cc.SpriteAtlas = await this.loaderSpriteFrame(this.m_frameFileName);
+        let spriteRigthFrame = spriteAtlas.getSpriteFrame(this.m_frameName);
 
         this.m_playerNode = new cc.Node("playerNode");
-        this.m_playerNode.setScale(2.5);
+        if(this.m_roleSuffix === "yellow_") {
+            this.m_playerNode.scale = 0.8
+        }
         this.m_playerNode.zIndex = 10;
-
-
 
         let sprite = this.m_playerNode.addComponent(cc.Sprite);
 
-        let rightAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/right");
+        let rightAnimationClip: cc.AnimationClip = await this.loaderRes("game/role/animation/" + this.m_roleSuffix + "right");
         rightAnimationClip.wrapMode = cc.WrapMode.Loop;
-        rightAnimationClip.speed = 2.5;
 
 
-        let leftAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/left");
-        leftAnimationClip.wrapMode = cc.WrapMode.Loop;
-        leftAnimationClip.speed = 2.5;
-
-        let upAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/up");
+        let upAnimationClip: cc.AnimationClip = await this.loaderRes("game/role/animation/" + this.m_roleSuffix + "up");
         upAnimationClip.wrapMode = cc.WrapMode.Loop;
-        upAnimationClip.speed = 2.5;
 
 
-        let downAnimationClip: cc.AnimationClip = await this.loaderRes("game/animation/down");
+        let downAnimationClip: cc.AnimationClip = await this.loaderRes("game/role/animation/" + this.m_roleSuffix + "down");
         downAnimationClip.wrapMode = cc.WrapMode.Loop;
-        downAnimationClip.speed = 2.5;
 
         this.m_animation = this.m_playerNode.addComponent(cc.Animation);
 
 
         this.m_animation.addClip(rightAnimationClip);
-        this.m_animation.addClip(leftAnimationClip);
         this.m_animation.addClip(upAnimationClip);
         this.m_animation.addClip(downAnimationClip);
 
@@ -87,13 +94,18 @@ export default class Player extends cc.Component {
         this.m_playerNode.setPosition(this.m_postioin);
 
         sprite.spriteFrame = spriteRigthFrame;
-        if (this.m_initSpriteDirection == 1) {
-            sprite.spriteFrame = spriteLeftFrame;
+        if(this.m_initSpriteDirection == 1) {
+            this.m_playerNode.scaleX = -1;
         }
     }
+    public setDrawNode(nodeDraw): void {
+        this.m_drawNode = nodeDraw
+    }
 
+    public setPlayerDrawNode(playerDraw): void {
+        this.m_playerDrawNode = playerDraw
+    }
     private sendSynPosition(): void {
-
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerSynPositionS");
         let msg = msgObject.create({ x: this.m_playerNode.x, y: this.m_playerNode.y, direction: this.m_direction });
         let msgEncode = msgObject.encode(msg).finish();
@@ -114,10 +126,50 @@ export default class Player extends cc.Component {
     public initSpriteDirection(spriteDirection): void {
         this.m_initSpriteDirection = spriteDirection;
     }
+
+    public setRoleImageType(type: number): void {
+        if (type == 1) {
+            this.m_roleSuffix = "yellow_";
+            this.m_frameFileName = "game/role/yellow";
+            this.m_frameName = "yellow_standright";
+        } else {
+            this.m_roleSuffix = "";
+            this.m_frameName = "red_standright";
+            this.m_frameFileName = "game/role/red";
+        }
+    }
     public setMap(map): void {
         this.m_map = map;
         this.m_wallLayer = this.m_map.getLayer("wall");
         this.m_itemLayer = this.m_map.getLayer("item");
+
+
+        let mapSize = this.m_map.getMapSize();
+
+
+        let tiledSize = this.m_map.getTileSize();
+        //this.m_drawNode.clear();
+
+        for (let i = 0; i < mapSize.width; i++) {
+            for (let j = 0; j < mapSize.height; j++) {
+                let pos = cc.v2(i, j);
+                if (this.m_wallLayer.getTileGIDAt(pos)) {
+                    let worldPos = this.tiledConverToWorldPos(pos);
+                    let box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
+                    //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
+                    this.m_itemBox.push(box)
+                }
+
+                if (this.m_itemLayer.getTileGIDAt(pos)) {
+                    let worldPos = this.tiledConverToWorldPos(pos);
+                    let box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
+                    //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
+                    this.m_itemBox.push(box)
+                }
+            }
+        }
+
+        //this.m_drawNode.fill();
     }
 
     public setJoystick(joystick: Joystick): void {
@@ -169,58 +221,29 @@ export default class Player extends cc.Component {
         if (this.m_animation == null) {
             return;
         }
-        let direction: cc.Vec2 = this.m_joystick.getDirection();
-        if (direction.x == 0 && direction.y == 0 && this.m_direction != DIRECTION.NONE) {
-            this.m_animation.stop();
-            this.m_direction = DIRECTION.NONE;
-            this.sendSynPosition();
-            return;
-        }
-
-        if (direction.y == 1 && this.m_direction != DIRECTION.UP) {
-            this.m_direction = DIRECTION.UP;
-            this.m_animation.play("up");
-        }
-        if (direction.y == -1 && this.m_direction != DIRECTION.DOWN) {
-            this.m_direction = DIRECTION.DOWN;
-            this.m_animation.play("down");
-        }
-        if (direction.x == -1 && this.m_direction != DIRECTION.LEFT) {
-            this.m_direction = DIRECTION.LEFT;
-            this.m_animation.play("left");
-        }
-        if (direction.x == 1 && this.m_direction != DIRECTION.RIGHT) {
-            this.m_direction = DIRECTION.RIGHT;
-            this.m_animation.play("right");
-        }
-
+        this.updatePlayerDirection();
         let nextPosition = this.m_playerNode.getPosition();
-        let playerContentSize = cc.size(20, 20);
         if (this.m_direction == DIRECTION.LEFT) {
-            nextPosition.x = nextPosition.x - this.m_playerSpeed - playerContentSize.width;
-            nextPosition = this.getTilePosition(nextPosition);
+            nextPosition.x = nextPosition.x - this.m_playerSpeed;
             if (this.moveNext(nextPosition)) {
                 this.m_playerNode.x = this.m_playerNode.x - this.m_playerSpeed;
                 this.sendSynPosition()
             }
         } else if (this.m_direction == DIRECTION.RIGHT) {
-            nextPosition.x = nextPosition.x + this.m_playerSpeed + playerContentSize.width;
-            nextPosition = this.getTilePosition(nextPosition);
+            nextPosition.x = nextPosition.x + this.m_playerSpeed;
             if (this.moveNext(nextPosition)) {
                 this.m_playerNode.x = this.m_playerNode.x + this.m_playerSpeed;
                 this.sendSynPosition()
             }
         } else if (this.m_direction == DIRECTION.UP) {
-            nextPosition.y = nextPosition.y + this.m_playerSpeed + playerContentSize.height;
-            nextPosition = this.getTilePosition(nextPosition);
+            nextPosition.y = nextPosition.y + this.m_playerSpeed;
             if (this.moveNext(nextPosition)) {
                 this.m_playerNode.y = this.m_playerNode.y + this.m_playerSpeed;
                 this.sendSynPosition()
             }
 
         } else if (this.m_direction == DIRECTION.DOWN) {
-            nextPosition.y = nextPosition.y - this.m_playerSpeed - playerContentSize.height;
-            nextPosition = this.getTilePosition(nextPosition);
+            nextPosition.y = nextPosition.y - this.m_playerSpeed;
             if (this.moveNext(nextPosition)) {
                 this.m_playerNode.y = this.m_playerNode.y - this.m_playerSpeed;
                 this.sendSynPosition()
@@ -228,163 +251,156 @@ export default class Player extends cc.Component {
         }
     }
 
+
+    private updatePlayerDirection(): void {
+        let direction: cc.Vec2 = this.m_joystick.getDirection();
+        if (direction.x == 0 && direction.y == 0 && this.m_direction != DIRECTION.NONE) {
+            this.adjustPosition();
+            this.m_animation.stop();
+            this.m_direction = DIRECTION.NONE;
+            this.sendSynPosition();
+            return;
+        }
+
+        if (direction.y == 1 && this.m_direction != DIRECTION.UP) {
+            this.adjustPosition();
+            this.m_direction = DIRECTION.UP;
+            this.m_animation.play(this.m_roleSuffix + "up");
+        }
+        if (direction.y == -1 && this.m_direction != DIRECTION.DOWN) {
+            this.adjustPosition();
+            this.m_direction = DIRECTION.DOWN;
+            this.m_animation.play(this.m_roleSuffix + "down");
+        }
+        if (direction.x == -1 && this.m_direction != DIRECTION.LEFT) {
+            this.adjustPosition();
+            this.m_direction = DIRECTION.LEFT;
+            this.m_animation.play(this.m_roleSuffix + "right");
+            this.m_playerNode.scaleX = -1;
+        }
+        if (direction.x == 1 && this.m_direction != DIRECTION.RIGHT) {
+            this.adjustPosition();
+            this.m_direction = DIRECTION.RIGHT;
+            this.m_animation.play(this.m_roleSuffix + "right");
+            this.m_playerNode.scaleX = 1;
+        }
+    }
+
     /**
-     * tiled map v2
+     * 调整位置放置 碰撞检测用
+     * @param direction 
+     */
+    private adjustPosition(): void {
+        if (this.m_direction == DIRECTION.UP) {
+            this.m_playerNode.y = this.m_playerNode.y - this.m_playerSpeed
+        } else if (this.m_direction == DIRECTION.DOWN) {
+            this.m_playerNode.y = this.m_playerNode.y + this.m_playerSpeed
+        } else if (this.m_direction == DIRECTION.LEFT) {
+            this.m_playerNode.x = this.m_playerNode.x + this.m_playerSpeed
+        } else if (this.m_direction == DIRECTION.RIGHT) {
+            this.m_playerNode.x = this.m_playerNode.x - this.m_playerSpeed
+        }
+    }
+
+    /**
+     * player next v2
      * @param nextPosition 
      */
     private moveNext(nextPosition: cc.Vec2): boolean {
 
+        let titedPosition = this.getTilePosition(nextPosition);
 
         var mapSize = this.m_map.getMapSize();
-        if (nextPosition.x < 0 || nextPosition.x >= mapSize.width) return false;
-        if (nextPosition.y < 0 || nextPosition.y >= mapSize.height) return false;
+        if (titedPosition.x < 0 || titedPosition.x >= mapSize.width) return false;
+        if (titedPosition.y < 0 || titedPosition.y >= mapSize.height) return false;
 
-        if (this.m_wallLayer.getTileGIDAt(nextPosition) || this.m_itemLayer.getTileGIDAt(nextPosition)) {
+
+        let playerPos = nextPosition;
+        let playerContent = cc.size(65, 85);
+        let playerBox = cc.rect(playerPos.x - playerContent.width / 2 + 10, playerPos.y - playerContent.height / 2 + 5, playerContent.width * 0.7, playerContent.height * 0.5);
+
+
+        // this.m_playerDrawNode.clear();
+        // this.m_playerDrawNode.rect(playerPos.x - playerContent.width / 2 + 10, playerPos.y - playerContent.height / 2 + 5, playerContent.width * 0.7, playerContent.height * 0.5);
+        // this.m_playerDrawNode.fill();
+
+
+        let intersectsArray: Array<any> = new Array();
+
+        for (let i = 0; i < this.m_itemBox.length; i++) {
+            let itemBox = this.m_itemBox[i];
+            if (itemBox.intersects(playerBox)) {
+                let outBox = this.intersection(itemBox, playerBox);
+                let intersectionData = {}
+                intersectionData["outBox"] = outBox;
+                intersectionData["itemBox"] = itemBox;
+                intersectsArray.push(intersectionData);
+            }
+        }
+
+        if (intersectsArray.length > 1) {
+            console.log("有两个碰撞体");
             return false;
         }
 
-        let off = 19;
-        let offMove = 15;
-        let playerPos = this.m_playerNode.getPosition();
-
-        if (this.m_direction == DIRECTION.DOWN) {
-
-            let firstPos = cc.v2(nextPosition.x + 1, nextPosition.y);  // 右侧
-            let firstPosition = this.tiledConverToWorldPos(firstPos);
-            let firstRect = cc.rect(firstPosition.x - 20, firstPosition.y - 20, 40, 40);
-
-            let secondPos = cc.v2(nextPosition.x - 1, nextPosition.y); // 左侧
-            let secondPosition = this.tiledConverToWorldPos(secondPos);
-            let secondRect = cc.rect(secondPosition.x - 20, secondPosition.y - 20, 40, 40);
-
-            let leftBottom = cc.v2(playerPos.x - off, playerPos.y - off);
-            let rightBottom = cc.v2(playerPos.x + off, playerPos.y - off);
-
-
-            if (firstRect.contains(rightBottom) && this.m_itemLayer.getTileGIDAt(firstPos)) {
-                let off = Math.abs(firstPosition.x - firstRect.width / 2 - rightBottom.x);
-                if (off <= offMove) {
-                    this.m_playerNode.x = this.m_playerNode.x - off;
-                    return true;
-                }
+        if (intersectsArray.length == 1) {
+            let intersectionData = intersectsArray[0];
+            let outBox = intersectionData["outBox"];
+            let itemBox = intersectionData["itemBox"]
+            if (outBox.width > playerBox.width / 2 || outBox.height > playerBox.height / 2) { //如果碰撞超过人物大小的一半 则 默认过不去
                 return false;
             }
-
-            if (secondRect.contains(leftBottom) && this.m_itemLayer.getTileGIDAt(secondPos)) {
-                let off = Math.abs(secondPosition.x + secondRect.width / 2 - leftBottom.x);
-                if (off <= offMove) {
-                    this.m_playerNode.x = this.m_playerNode.x + off;
-                    return true;
-                }
-                return false;
-            }
-
-        } else if (this.m_direction == DIRECTION.UP) {
-
-            let firstPos = cc.v2(nextPosition.x + 1, nextPosition.y); // 右侧
-            let firstPosition = this.tiledConverToWorldPos(firstPos);
-            let firstRect = cc.rect(firstPosition.x - 20, firstPosition.y - 20, 40, 40);
-
-            let secondPos = cc.v2(nextPosition.x - 1, nextPosition.y); //左侧
-            let secondPosition = this.tiledConverToWorldPos(secondPos);
-            let secondRect = cc.rect(secondPosition.x - 20, secondPosition.y - 20, 40, 40);
-
-            let leftTop = cc.v2(playerPos.x - off, playerPos.y + off);
-            let rightTop = cc.v2(playerPos.x + off, playerPos.y + off);
-
-            if (firstRect.contains(rightTop) && this.m_itemLayer.getTileGIDAt(firstPos)) {
-                let off = Math.abs(firstPosition.x - firstRect.width / 2 - rightTop.x);
-                if (off <= offMove) {
-                    this.m_playerNode.x = this.m_playerNode.x - off;
-                    return true;
-                }
-                return false;
-            }
-
-            if (secondRect.contains(leftTop) && this.m_itemLayer.getTileGIDAt(secondPos)) {
-                let off = Math.abs(secondPosition.x + secondRect.width / 2 - leftTop.x);
-                if (off <= offMove) {
-                    this.m_playerNode.x = this.m_playerNode.x + off;
-                    return true;
-                }
-                return false;
-            }
-        } else if (this.m_direction == DIRECTION.LEFT) {
-
-            let firstPos = cc.v2(nextPosition.x, nextPosition.y + 1); //下
-            let firstPosition = this.tiledConverToWorldPos(firstPos);
-            let firstRect = cc.rect(firstPosition.x - 20, firstPosition.y - 20, 40, 40);
-
-            let secondPos = cc.v2(nextPosition.x, nextPosition.y - 1); //上
-            let secondPosition = this.tiledConverToWorldPos(secondPos);
-            let secondRect = cc.rect(secondPosition.x - 20, secondPosition.y - 20, 40, 40);
-
-            let leftTop = cc.v2(playerPos.x - off, playerPos.y + off);
-            let leftBottom = cc.v2(playerPos.x - off, playerPos.y - off);
-
-
-            if (firstRect.contains(leftBottom) && this.m_itemLayer.getTileGIDAt(firstPos)) {
-                let off = Math.abs(firstRect.height / 2 + firstPosition.y - leftBottom.y);
-                if (off <= offMove) {
-                    this.m_playerNode.y = this.m_playerNode.y + off;
-                    return true;
-                }
-                return false;
-            }
-
-            if (secondRect.contains(leftTop) && this.m_itemLayer.getTileGIDAt(secondPos)) {
-                let off = Math.abs(secondPosition.y - secondRect.height / 2 - leftTop.y);
-                if (off <= offMove) {
-                    this.m_playerNode.y = this.m_playerNode.y - off;
-                    return true;
-                }
-                return false;
-            }
-
-        } else if (this.m_direction == DIRECTION.RIGHT) {
-
-            let firstPos = cc.v2(nextPosition.x, nextPosition.y + 1); //下
-            let firstPosition = this.tiledConverToWorldPos(firstPos);
-            let firstRect = cc.rect(firstPosition.x - 20, firstPosition.y - 20, 40, 40);
-
-            let secondPos = cc.v2(nextPosition.x, nextPosition.y - 1); //上
-            let secondPosition = this.tiledConverToWorldPos(secondPos);
-            let secondRect = cc.rect(secondPosition.x - 20, secondPosition.y - 20, 40, 40);
-
-            let rightTop = cc.v2(playerPos.x + off, playerPos.y + off);
-            let rightBottom = cc.v2(playerPos.x + off, playerPos.y - off);
-
-
-            if (firstRect.contains(rightBottom) && this.m_itemLayer.getTileGIDAt(firstPos)) {
-                let off = Math.abs(firstPosition.y + firstRect.height / 2 - rightBottom.y);
-                if (off <= offMove) {
-                    this.m_playerNode.y = this.m_playerNode.y + off;
-                    return true;
-                }
-                return false;
-            }
-
-            if (secondRect.contains(rightTop) && this.m_itemLayer.getTileGIDAt(secondPos)) {
-                let off = Math.abs(secondPosition.y - secondRect.height / 2 - rightTop.y);
-                if (off <= offMove) {
-                    this.m_playerNode.y = this.m_playerNode.y - off;
-                    return true;
-                }
-                return false;
-            }
+            return this.forceMoveDirection(itemBox, playerBox, outBox);
         }
 
-        if (BombManager.getInstance().collide(this.tiledConverToWorldPos(nextPosition))) {
+        if (BombManager.getInstance().collide(this.tiledConverToWorldPos(titedPosition))) {
             return false;
         }
         return true;
     }
 
+    private intersection(rectB, rectA): cc.Rect {
+        var axMin = rectA.x, ayMin = rectA.y, axMax = rectA.x + rectA.width, ayMax = rectA.y + rectA.height;
+        var bxMin = rectB.x, byMin = rectB.y, bxMax = rectB.x + rectB.width, byMax = rectB.y + rectB.height;
+        let out = cc.rect(0, 0, 0, 0);
+        out.x = Math.max(axMin, bxMin);
+        out.y = Math.max(ayMin, byMin);
+        out.width = Math.min(axMax, bxMax) - out.x;
+        out.height = Math.min(ayMax, byMax) - out.y;
+        return out;
+    };
+
+    private forceMoveDirection(itemBox: cc.Rect, playerBox: cc.Rect, outBox: cc.Rect): boolean {
+
+        if (this.m_direction == DIRECTION.UP || this.m_direction == DIRECTION.DOWN) {
+            if (outBox.width > 0 && outBox.width < 15) { //上下走的时候碰撞了 15 是否阈值
+                if (itemBox.x > playerBox.x) { //碰撞体在人物的右侧
+                    this.m_playerNode.x = this.m_playerNode.x - outBox.width - 6;
+                } else {//碰撞体在人物的左侧
+                    this.m_playerNode.x = this.m_playerNode.x + outBox.width + 6;
+                }
+                return true;
+            }
+        }
+
+        if (this.m_direction == DIRECTION.LEFT || this.m_direction == DIRECTION.RIGHT) {
+            if (outBox.height > 0 && outBox.height < 15) { // 左右走的时候碰撞了
+                if (itemBox.y > playerBox.y) { //碰撞体在人物的上面
+                    this.m_playerNode.y = this.m_playerNode.y - outBox.height - 10;
+                } else {//碰撞体在人物的下面
+                    this.m_playerNode.y = this.m_playerNode.y + outBox.height + 10;
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
     private tiledConverToWorldPos(pos: cc.Vec2): cc.Vec2 {
         let tileSize = this.m_map.getTileSize();
         let mapSize = this.m_map.getMapSize();
-        let x = pos.x * tileSize.width + 20;
-        let y = (mapSize.height - pos.y) * tileSize.height - 20;
+        let x = pos.x * tileSize.width + tileSize.width / 2;
+        let y = (mapSize.height - pos.y) * tileSize.height;
         return cc.v2(x, y);
     }
 
@@ -399,9 +415,9 @@ export default class Player extends cc.Component {
         });
     }
 
-    public loaderSpriteFrame(): Promise<any> {
+    public loaderSpriteFrame(name: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            cc.loader.loadRes("game/man", cc.SpriteAtlas, (error, res) => {
+            cc.loader.loadRes(name, cc.SpriteAtlas, (error, res) => {
                 if (error) {
                     reject(error);
                 }

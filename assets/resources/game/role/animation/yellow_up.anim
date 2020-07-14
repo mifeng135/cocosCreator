@@ -1,0 +1,43 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "yellow_up",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.5166666666666667,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 2,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "bbe9ec38-42de-489f-b915-0120b09191f7"
+            }
+          },
+          {
+            "frame": 0.16666666666666666,
+            "value": {
+              "__uuid__": "6d8ddf97-22bc-48d0-826d-3246403e9485"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "ce1f9e35-f3b9-4656-9c3c-d786d8e3cd15"
+            }
+          },
+          {
+            "frame": 0.5,
+            "value": {
+              "__uuid__": "bbe9ec38-42de-489f-b915-0120b09191f7"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}

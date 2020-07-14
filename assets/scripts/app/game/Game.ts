@@ -22,9 +22,13 @@ export default class Game extends cc.Component {
     @property(cc.Node)
     m_joystick = null;
 
-    @property(cc.Button)
-    m_bombButton = null;
 
+    @property(cc.Graphics)
+    m_graphics = null;
+
+
+    @property(cc.Graphics)
+    m_playerGraphics = null;
 
     private m_player: Player = null;
     private m_playerPosition0 = null; //左上角
@@ -48,6 +52,10 @@ export default class Game extends cc.Component {
         let players = this.m_map.getObjectGroup("players");
         this.m_playerPosition0 = players.getObject("player1");
         this.m_playerPosition1 = players.getObject("player2");
+
+
+        let layer = this.m_map.getLayer("fg");
+        layer.node.zIndex = 20;
     }
 
     public addEventListener(): void {
@@ -71,8 +79,11 @@ export default class Game extends cc.Component {
         this.m_roomPlayerList = msg.playerList
     }
 
-    public addSelfPlayer(direction, position, playerId): void {
+    public addSelfPlayer(direction, position, playerId, roleType): void {
         this.m_player = this.m_map.addComponent(Player);
+        this.m_player.setRoleImageType(roleType);
+        this.m_player.setDrawNode(this.m_graphics)
+        this.m_player.setPlayerDrawNode(this.m_playerGraphics)
         this.m_player.setPosition(position);
         this.m_player.setMap(this.m_map);
         this.m_player.setPlayerId(playerId);
@@ -80,8 +91,9 @@ export default class Game extends cc.Component {
         this.m_player.initSpriteDirection(direction);
     }
 
-    public addOtherPlayer(direction, position, playerId): void {
+    public addOtherPlayer(direction, position, playerId, roleType): void {
         this.m_otherPlayer = this.m_map.addComponent(OtherPlayer);
+        this.m_otherPlayer.setRoleImageType(roleType);
         this.m_otherPlayer.setPosition(position);
         this.m_otherPlayer.setMap(this.m_map);
         this.m_otherPlayer.setPlayerId(playerId);
@@ -116,11 +128,11 @@ export default class Game extends cc.Component {
         }
 
         if (position == 0) {
-            this.addSelfPlayer(0, cc.v2(this.m_playerPosition0.x, this.m_playerPosition0.y), playerId);
-            this.addOtherPlayer(0, cc.v2(this.m_playerPosition1.x, this.m_playerPosition1.y), otherPlayerId)
+            this.addSelfPlayer(0, cc.v2(this.m_playerPosition0.x, this.m_playerPosition0.y), playerId, 0);
+            this.addOtherPlayer(1, cc.v2(this.m_playerPosition1.x, this.m_playerPosition1.y), otherPlayerId, 1)
         } else {
-            this.addSelfPlayer(1, cc.v2(this.m_playerPosition1.x, this.m_playerPosition1.y), playerId);
-            this.addOtherPlayer(1, cc.v2(this.m_playerPosition0.x, this.m_playerPosition0.y), otherPlayerId)
+            this.addSelfPlayer(1, cc.v2(this.m_playerPosition1.x, this.m_playerPosition1.y), playerId, 1);
+            this.addOtherPlayer(0, cc.v2(this.m_playerPosition0.x, this.m_playerPosition0.y), otherPlayerId, 0);
         }
     }
 

@@ -31,7 +31,6 @@ export default class Joystick extends cc.Component {
     private m_directionEnum: number = 4; // 默认为没有方向
 
     onLoad() {
-        this.m_originPosition = cc.v2(this.node.getPosition().x, this.node.getPosition().y);
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
@@ -55,12 +54,10 @@ export default class Joystick extends cc.Component {
 
     private onTouchEnd(event) {
         this.setRockerPositionAndCalcDirection(cc.v2(0, 0));
-        this.node.setPosition(cc.v2(this.m_originPosition.x, this.m_originPosition.y));
     }
 
     private onTouchCancel(event) {
         this.setRockerPositionAndCalcDirection(cc.v2(0, 0));
-        this.node.setPosition(cc.v2(this.m_originPosition.x, this.m_originPosition.y));
     }
 
     private setRockerPositionAndCalcDirection(position): void {

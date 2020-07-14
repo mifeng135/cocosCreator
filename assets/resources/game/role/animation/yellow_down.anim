@@ -1,0 +1,43 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "yellow_down",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.5166666666666667,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 2,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "bf28b903-a626-4376-9006-0bc283cabcc6"
+            }
+          },
+          {
+            "frame": 0.16666666666666666,
+            "value": {
+              "__uuid__": "a7b94124-7777-4335-890c-56779b5c7a25"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "dec221ad-5276-479c-ad38-bab54c204f53"
+            }
+          },
+          {
+            "frame": 0.5,
+            "value": {
+              "__uuid__": "bf28b903-a626-4376-9006-0bc283cabcc6"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}
