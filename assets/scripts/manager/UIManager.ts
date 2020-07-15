@@ -144,8 +144,8 @@ export default class UIManager {
      */
     private check(uiName: string, param?: any, animationFinish?: Function): void {
 
-        let uiinfo:BaseUIInfo = this.m_stack.peek();
-        if (this.m_stack.size() > 0 &&  uiinfo.uiName === uiName) {
+        let uiinfo: BaseUIInfo = this.m_stack.peek();
+        if (this.m_stack.size() > 0 && uiinfo.uiName === uiName) {
             return;
         }
 
@@ -179,7 +179,7 @@ export default class UIManager {
             baseUIInfo.preventNode = this.preventTouch();
             baseUIInfo.baseView = uiView;
             uiView.node.setContentSize(cc.winSize);
-            uiView.node.addChild(baseUIInfo.preventNode,-2);
+            uiView.node.addChild(baseUIInfo.preventNode, -2);
             this.addToScene(baseUIInfo);
         }, param);
     }
@@ -406,12 +406,27 @@ export default class UIManager {
     private preventTouch() {
         let node = new cc.Node()
         node.name = 'preventTouch';
-        node.setContentSize(cc.winSize);
-        node.color = cc.Color.BLACK;
+    
+        this.loadBack((res) => {
+            let sprite = node.addComponent(cc.Sprite);
+            var mylogo  = new cc.SpriteFrame(res); 
+            sprite.spriteFrame = mylogo;
+            node.setContentSize(cc.winSize);
+            node.color = cc.Color.BLACK;
+            node.opacity = 100;
+        });
         node.on(cc.Node.EventType.TOUCH_START, function (event: cc.Event.EventCustom) {
             event.stopPropagation();
         }, node);
 
         return node;
+    }
+
+    private loadBack(callBack): void {
+        cc.loader.loadRes("common/default_panel", (error, res) => {
+            if (error) {
+            }
+            callBack(res)
+        })
     }
 }
