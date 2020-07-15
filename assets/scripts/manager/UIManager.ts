@@ -266,6 +266,20 @@ export default class UIManager {
         })
     }
 
+
+    public closeAll(): void {
+        while (this.m_stack.size() > 0) {
+            let baseUiInfo: BaseUIInfo = this.m_stack.pop();
+            if (baseUiInfo.cache) {
+                this.m_uiCache[baseUiInfo.uiName] = baseUiInfo.baseView;
+                baseUiInfo.baseView.node.removeFromParent(false);
+            } else {
+                baseUiInfo.baseView.releaseAutoRes();
+                baseUiInfo.baseView.node.destroy();
+            }
+        }
+    }
+
     /**
      * 将baseUIView 从当前场景移除 如果传入name 则根据name 移除
      * 如果不传则是移除顶部界面
@@ -273,6 +287,11 @@ export default class UIManager {
      * @param animation 
      */
     public closeUI(uiName?: string, animation: boolean = true): void {
+
+        if (this.m_stack.size() <= 0) {
+            return;
+        }
+
         let baseUiInfo: BaseUIInfo
         if (uiName) {
             baseUiInfo = this.m_stack.remove(uiName);
@@ -406,10 +425,10 @@ export default class UIManager {
     private preventTouch() {
         let node = new cc.Node()
         node.name = 'preventTouch';
-    
+
         this.loadBack((res) => {
             let sprite = node.addComponent(cc.Sprite);
-            var mylogo  = new cc.SpriteFrame(res); 
+            var mylogo = new cc.SpriteFrame(res);
             sprite.spriteFrame = mylogo;
             node.setContentSize(cc.winSize);
             node.color = cc.Color.BLACK;

@@ -227,6 +227,8 @@ export default class Game extends cc.Component {
         } else {
             UIManager.getInstance().addUI("gameLose");
         }
+
+
     }
 
     public onMsgRecvBombExplode(data): void {
@@ -244,5 +246,8 @@ export default class Game extends cc.Component {
                 this.m_otherPlayer.setHelpAnimation();
             }
         }
+
+        let joystickOc: Joystick = this.m_joystick.getComponent(Joystick);
+        joystickOc.setEnabledMove(false);
     }
 }

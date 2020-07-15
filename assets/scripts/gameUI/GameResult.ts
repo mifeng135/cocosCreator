@@ -1,4 +1,5 @@
 import BaseUIView from "../ui/BaseUIView";
+import UIManager from "../manager/UIManager";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -17,6 +18,7 @@ export default class GameResult extends BaseUIView {
 
 
     public onConfirmClick(): void {
+        UIManager.getInstance().closeAll();
         cc.director.loadScene("lobbyScene");
     }
 }
