@@ -30,9 +30,11 @@ message roomPlayerListR {
 }
 
 message player {
-	int32 id = 1;
-	string name = 2;
-	int32 position = 3;
+	int32 id = 1; 
+	string name = 2; 
+	int32 position = 3; 
+	int32 x = 4;
+	int32 y = 5; 
 }
 
 message readyS {
@@ -40,6 +42,7 @@ message readyS {
 }
 
 message readyR {
+
 }
 
 message gameStartR {

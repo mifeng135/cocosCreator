@@ -7,119 +7,119 @@
             <key>center.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{134,134},{64,68}}</string>
+                <string>{{134,134},{68,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{64,68}}</string>
+                <string>{{0,0},{68,64}}</string>
                 <key>sourceSize</key>
-                <string>{64,68}</string>
+                <string>{68,64}</string>
             </dict>
             <key>down.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{134,68},{64,68}}</string>
+                <string>{{68,134},{68,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{64,68}}</string>
+                <string>{{0,0},{68,64}}</string>
                 <key>sourceSize</key>
-                <string>{64,68}</string>
+                <string>{68,64}</string>
             </dict>
             <key>down_end.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{68,138},{64,68}}</string>
+                <string>{{138,68},{68,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{64,68}}</string>
+                <string>{{0,0},{68,64}}</string>
                 <key>sourceSize</key>
-                <string>{64,68}</string>
+                <string>{68,64}</string>
             </dict>
             <key>left.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{68,68},{64,68}}</string>
+                <string>{{68,68},{68,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{64,68}}</string>
+                <string>{{0,0},{68,64}}</string>
                 <key>sourceSize</key>
-                <string>{64,68}</string>
+                <string>{68,64}</string>
             </dict>
             <key>left_end.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{138,2},{64,68}}</string>
+                <string>{{2,138},{68,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{64,68}}</string>
+                <string>{{0,0},{68,64}}</string>
                 <key>sourceSize</key>
-                <string>{64,68}</string>
+                <string>{68,64}</string>
             </dict>
             <key>right.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{68,2},{64,68}}</string>
+                <string>{{2,68},{68,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <true/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{64,68}}</string>
+                <string>{{0,0},{68,64}}</string>
                 <key>sourceSize</key>
-                <string>{64,68}</string>
+                <string>{68,64}</string>
             </dict>
             <key>right_end.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,142},{64,68}}</string>
+                <string>{{142,2},{68,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{64,68}}</string>
+                <string>{{0,0},{68,64}}</string>
                 <key>sourceSize</key>
-                <string>{64,68}</string>
+                <string>{68,64}</string>
             </dict>
             <key>up.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,72},{64,68}}</string>
+                <string>{{72,2},{68,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{64,68}}</string>
+                <string>{{0,0},{68,64}}</string>
                 <key>sourceSize</key>
-                <string>{64,68}</string>
+                <string>{68,64}</string>
             </dict>
             <key>up_end.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,2},{64,68}}</string>
+                <string>{{2,2},{68,64}}</string>
                 <key>offset</key>
                 <string>{0,0}</string>
                 <key>rotated</key>
                 <false/>
                 <key>sourceColorRect</key>
-                <string>{{0,0},{64,68}}</string>
+                <string>{{0,0},{68,64}}</string>
                 <key>sourceSize</key>
-                <string>{64,68}</string>
+                <string>{68,64}</string>
             </dict>
         </dict>
         <key>metadata</key>
@@ -131,7 +131,7 @@
             <key>size</key>
             <string>{256,256}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:364e2aed8129826d3af0293d3fcd20eb:0ed5bd0ac5c2d3cb7a9cd4b64263e330:54ef301687bdd17f0f52292e9b0e1a8b$</string>
+            <string>$TexturePacker:SmartUpdate:b05f8e222e221814c5c436b29fd17ae9:5e1d9d15e433b2c3f073111456319369:54ef301687bdd17f0f52292e9b0e1a8b$</string>
             <key>textureFileName</key>
             <string>bombSprite.png</string>
         </dict>

@@ -61,16 +61,18 @@ export default class Game extends cc.Component {
     public addEventListener(): void {
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_START_R, this.onMsgRecvGameStart, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_R, this.onMsgRecvPlayerBombPlace, this);
-        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_PLAYER_POSITION_R, this.onMsgRecvPlayerPos, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_R, this.onMsgRecvSynPosition, this);
+        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_OVER_R, this.onMsgRecvGameOver, this);
+        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_R, this.onMsgRecvBombExplode, this);
 
     }
 
     private removeEventListener(): void {
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_START_R, this.onMsgRecvGameStart);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_R, this.onMsgRecvPlayerBombPlace);
-        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_PLAYER_POSITION_R, this.onMsgRecvPlayerPos);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_R, this.onMsgRecvSynPosition);
+        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_OVER_R, this.onMsgRecvGameOver);
+        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_R, this.onMsgRecvBombExplode);
     }
 
     onMsgRecvOtherJoinRoom(data): void {
@@ -153,11 +155,25 @@ export default class Game extends cc.Component {
     }
 
     public addBombToMap(position: cc.Vec2): void {
+
+        let playerId = LocalDataManager.getInstance().getPlayerId();
+        let index = 0;
+        for (let i = 0; i < this.m_roomPlayerList.length; i++) {
+            let data = this.m_roomPlayerList[i];
+            if (data.id == playerId) {
+                index = data.position;
+                break;
+            }
+        }
+
+
         let tiled = this.getTilePosition(position);
         let bomb = this.m_map.addComponent(Bomb);
         bomb.setBombPosition(position, tiled);
         bomb.setItemLayer(this.m_map);
         bomb.setPlayer(this.m_player);
+        bomb.setOtherPlayer(this.m_otherPlayer);
+        bomb.setIndex(index);
     }
 
     private getTilePosition(posInPixel) {
@@ -169,17 +185,7 @@ export default class Game extends cc.Component {
         return cc.v2(x, y);
     }
 
-    public onMsgRecvPlayerPos(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerPosR");
-        let msg = msgOC.decode(data);
-        let direction = msg.direction;
-        let id = msg.id;
-        if (this.m_player.getPlayerId() == id) {
-            this.m_player.updateMoveDirection(direction);
-        } else {
-            this.m_otherPlayer.updateMoveDirection(direction);
-        }
-    }
+
     onPutDownBomb(): void {
         let playerId = LocalDataManager.getInstance().getPlayerId();
         if (this.m_player.getPlayerId() == playerId) {
@@ -203,5 +209,29 @@ export default class Game extends cc.Component {
             this.m_otherPlayer.updatePlayerPosition(cc.v2(x, y));
             this.m_otherPlayer.updateMoveDirection(direction);
         }
+    }
+
+
+    public onMsgRecvGameOver(data): void {
+        let playerId = LocalDataManager.getInstance().getPlayerId();
+        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "gameOverR");
+        let msg = msgOC.decode(data);
+        let winId = msg.winId;
+
+        if (winId == -1) {
+            console.log("平局")
+        }
+        if (playerId == winId) {
+            console.log("自己赢了")
+        } else {
+            console.log("别人赢了")
+        }
+    }
+
+    public onMsgRecvBombExplode(data): void {
+        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "bombExplodeR");
+        let msg = msgOC.decode(data);
+        let deadList = msg.deadList;
+        console.log(deadList);
     }
 }

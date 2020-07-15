@@ -37,4 +37,23 @@ message playerSynPositionR {
 	int32 direction = 4;
 }
 
+message bombExplodeS {
+	repeated bombVec explodePath = 1;
+}
+
+message bombVec {
+	int32 x = 1;
+	int32 y = 2;
+}
+
+message bombExplodeR {
+	repeated int32 deadList = 1;
+}
+
+
+message gameOverR {
+	int32 winId = 1;
+}
+
+
 

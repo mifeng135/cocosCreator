@@ -98,6 +98,10 @@ export default class OtherPlayer extends cc.Component {
         return this.m_playerId;
     }
 
+    public getPlayerPosition(): cc.Vec2 {
+        return this.m_playerNode.getPosition();
+    }
+    
     public setPosition(pos: cc.Vec2): void {
         this.m_postioin = pos;
     }
@@ -107,6 +111,7 @@ export default class OtherPlayer extends cc.Component {
         this.m_wallLayer = this.m_map.getLayer("wall");
         this.m_itemLayer = this.m_map.getLayer("item");
     }
+
 
     public setRoleImageType(type: number): void {
         if (type == 1) {

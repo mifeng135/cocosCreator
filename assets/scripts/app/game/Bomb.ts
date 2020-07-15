@@ -1,5 +1,11 @@
 import BombManager from "./BombManager";
 import Player from "./Player";
+import OtherPlayer from "./OtherPlayer";
+import NetWebsocket from "../../manager/NetWebsocket";
+import MsgUtil from "../../utils/MsgUtil";
+import ProtoConstant from "../../constant/ProtoConstant";
+import ProtoManager from "../../manager/ProtoManager";
+import MsgCmdConstant from "../../constant/MsgCmdConstant";
 
 const { ccclass, property } = cc._decorator;
 
@@ -33,7 +39,10 @@ export default class Bomb extends cc.Component {
 
 
     private m_playerComponent: Player = null;
+    private m_otherPlayer: OtherPlayer = null;
 
+
+    private m_index: number = 0;
 
     async onLoad() {
 
@@ -107,6 +116,14 @@ export default class Bomb extends cc.Component {
 
     public setPlayer(player: Player): void {
         this.m_playerComponent = player;
+    }
+
+    public setOtherPlayer(otherPlayer: OtherPlayer): void {
+        this.m_otherPlayer = otherPlayer;
+    }
+
+    public setIndex(index: number): void {
+        this.m_index = index;
     }
 
     /**
@@ -328,9 +345,9 @@ export default class Bomb extends cc.Component {
     }
 
     public createBombSprite(bombPath): void {
+
+
         this.createSpriteBomb(this.m_bombTiledPos, "center", 0);
-
-
 
         for (let i = 0; i < bombPath.length; i++) {
             let oneBombPath = bombPath[i];
@@ -379,11 +396,11 @@ export default class Bomb extends cc.Component {
             }
         }
 
-
-
         this.scheduleOnce(this.remveTiled.bind(this), 0.08 * this.m_bombPower)
 
         this.scheduleOnce(this.clearBombSpriteArray.bind(this), 0.5)
+
+        this.checkBombCheck(bombPath);
     }
 
     private remveTiled() {
@@ -411,6 +428,60 @@ export default class Bomb extends cc.Component {
                 bombSpriteNode.removeFromParent();
             }
         }
+    }
+
+
+    private checkBombCheck(bombPath): void {
+
+        let explodePath: Array<cc.Vec2> = new Array();
+
+        explodePath.push(cc.v2(this.m_bombTiledPos.x, this.m_bombTiledPos.y));
+
+
+        for (let index = 0; index < bombPath.length; index++) {
+            let oneBombPath = bombPath[index];
+            let leftPath = oneBombPath["left"];
+            let rightPath = oneBombPath["right"];
+            let upPath = oneBombPath["up"];
+            let downPath = oneBombPath["down"];
+
+            for (let i = 0; i < leftPath.length; i++) {
+                let pos = leftPath[i];
+                explodePath.push(pos);
+            }
+
+            for (let i = 0; i < rightPath.length; i++) {
+                let pos = rightPath[i];
+                explodePath.push(pos);
+            }
+
+            for (let i = 0; i < upPath.length; i++) {
+                let pos = upPath[i];
+                explodePath.push(pos);
+            }
+
+            for (let i = 0; i < downPath.length; i++) {
+                let pos = downPath[i];
+                explodePath.push(pos);
+            }
+        }
+
+        if(this.m_index == 0) {
+            let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "bombExplodeS");
+            let msg = msgObject.create({ explodePath: explodePath });
+            let msgEncode = msgObject.encode(msg).finish();
+            let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_S, msgEncode);
+            NetWebsocket.getInstance().sendMsg(sendBuf);
+        }
+    }
+
+    private getTilePosition(posInPixel) {
+        let tileSize = this.m_map.getTileSize();
+        let mapSize = this.m_map.getMapSize();
+        let mapTatolHeight = tileSize.height * mapSize.height;
+        let x = Math.floor(posInPixel.x / tileSize.width);
+        let y = Math.floor(((mapTatolHeight - posInPixel.y) / tileSize.height));
+        return cc.v2(x, y);
     }
 
     private tiledTranlateToWorldPos(pos: cc.Vec2): cc.Vec2 {

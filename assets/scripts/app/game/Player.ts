@@ -98,12 +98,17 @@ export default class Player extends cc.Component {
             this.m_playerNode.scaleX = -1;
         }
     }
+
     public setDrawNode(nodeDraw): void {
         this.m_drawNode = nodeDraw
     }
 
     public setPlayerDrawNode(playerDraw): void {
         this.m_playerDrawNode = playerDraw
+    }
+
+    public getPlayerPosition(): cc.Vec2 {
+        return this.m_playerNode.getPosition();
     }
     private sendSynPosition(): void {
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerSynPositionS");

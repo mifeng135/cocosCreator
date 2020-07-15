@@ -34,8 +34,8 @@ export default class MsgCmdConstant {
     public static MSG_CMD_GAME_JOIN_ROOM_R: number = 4004;
     public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R: number = 4005;
 
-    public static MSG_CMD_GAME_ROOM_PLAYER_LIST_S:number = 4006;
-    public static MSG_CMD_GAME_ROOM_PLAYER_LIST_R:number = 4007;
+    // public static MSG_CMD_GAME_ROOM_PLAYER_LIST_S:number = 4006;
+    // public static MSG_CMD_GAME_ROOM_PLAYER_LIST_R:number = 4007;
 
 
     public static MSG_CMD_GAME_READY_S:number = 4008;
@@ -47,12 +47,14 @@ export default class MsgCmdConstant {
     public static MSG_CMD_PLAYER_BOMB_PLACE_R:number = 4012;
 
 
-    public static MSG_CMD_PLAYER_POSITION_S = 4013;
-    public static MSG_CMD_PLAYER_POSITION_R = 4014;
-
+    public static MSG_CMD_BOMB_EXPLODE_S:number = 4013;
+    public static MSG_CMD_BOMB_EXPLODE_R:number = 4014;
 
     public static MSG_CMD_PLAYER_SYN_POSITION_S = 4015;
     public static MSG_CMD_PLAYER_SYN_POSITION_R = 4016;
+
+    public static MSG_CMD_GAME_OVER_S = 4017;
+    public static MSG_CMD_GAME_OVER_R = 4018;
 
     public static MSG_CMD_GAME_END: number = 4999;
 
