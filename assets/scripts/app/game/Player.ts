@@ -54,6 +54,9 @@ export default class Player extends cc.Component {
     private m_frameFileName: string = "game/role/red";
 
 
+    private static m_msgCount:number = 0;
+
+
     onLoad() {
 
     }
@@ -154,7 +157,7 @@ export default class Player extends cc.Component {
         this.m_animation.play(this.m_roleSuffix + "help");
         this.m_playerNode.scale = 0.7
     }
-    
+
     public setMap(map): void {
         this.m_map = map;
         this.m_wallLayer = this.m_map.getLayer("wall");

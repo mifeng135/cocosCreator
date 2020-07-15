@@ -40,6 +40,8 @@ export default class Game extends cc.Component {
 
     private m_roomPlayerList: Array<any> = new Array();
 
+    private m_gameStart: boolean = false;
+
 
     onLoad() {
         this.init();
@@ -137,10 +139,17 @@ export default class Game extends cc.Component {
             this.addSelfPlayer(1, cc.v2(this.m_playerPosition1.x, this.m_playerPosition1.y), playerId, 1);
             this.addOtherPlayer(0, cc.v2(this.m_playerPosition0.x, this.m_playerPosition0.y), otherPlayerId, 0);
         }
+        let joystickOc: Joystick = this.m_joystick.getComponent(Joystick);
+        joystickOc.setEnabledMove(true);
+        this.m_gameStart = true;
     }
 
 
     onReadyClick(): void {
+        if (this.m_gameStart) {
+            return;
+        }
+
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_ROOM, "readyS");
         let msg = msgObject.create({})
         let msgEncode = msgObject.encode(msg).finish();
@@ -188,6 +197,9 @@ export default class Game extends cc.Component {
 
 
     onPutDownBomb(): void {
+        if (this.m_gameStart == false) {
+            return;
+        }
         let playerId = LocalDataManager.getInstance().getPlayerId();
         if (this.m_player.getPlayerId() == playerId) {
             this.m_player.putdownBomb();
@@ -227,8 +239,6 @@ export default class Game extends cc.Component {
         } else {
             UIManager.getInstance().addUI("gameLose");
         }
-
-
     }
 
     public onMsgRecvBombExplode(data): void {

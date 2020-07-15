@@ -21,7 +21,7 @@ export default class Joystick extends cc.Component {
     private m_maxRadius: number = 80;
 
 
-    private m_enableMove: boolean = true;
+    private m_enableMove: boolean = false;
     onLoad() {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
