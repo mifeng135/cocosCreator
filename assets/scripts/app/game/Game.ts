@@ -9,6 +9,7 @@ import MsgUtil from "../../utils/MsgUtil";
 import NetWebsocket from "../../manager/NetWebsocket";
 import LocalDataManager from "../../manager/LocalDataManager";
 import Bomb from "./Bomb";
+import UIManager from "../../manager/UIManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -219,12 +220,12 @@ export default class Game extends cc.Component {
         let winId = msg.winId;
 
         if (winId == -1) {
-            console.log("平局")
+            UIManager.getInstance().addUI("gameLose");
         }
         if (playerId == winId) {
-            console.log("自己赢了")
+            UIManager.getInstance().addUI("gameWin");
         } else {
-            console.log("别人赢了")
+            UIManager.getInstance().addUI("gameLose");
         }
     }
 
@@ -232,6 +233,16 @@ export default class Game extends cc.Component {
         let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "bombExplodeR");
         let msg = msgOC.decode(data);
         let deadList = msg.deadList;
-        console.log(deadList);
+
+        for (let i = 0; i < deadList.length; i++) {
+            let id = deadList[i];
+            if (this.m_player.getPlayerId() == id) {
+                this.m_player.setHelpAnimation();
+            }
+
+            if (this.m_otherPlayer.getPlayerId() == id) {
+                this.m_otherPlayer.setHelpAnimation();
+            }
+        }
     }
 }

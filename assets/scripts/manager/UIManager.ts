@@ -407,9 +407,11 @@ export default class UIManager {
         let node = new cc.Node()
         node.name = 'preventTouch';
         node.setContentSize(cc.winSize);
+        node.color = cc.Color.BLACK;
         node.on(cc.Node.EventType.TOUCH_START, function (event: cc.Event.EventCustom) {
             event.stopPropagation();
         }, node);
+
         return node;
     }
 }

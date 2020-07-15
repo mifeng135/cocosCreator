@@ -82,12 +82,17 @@ export default class Player extends cc.Component {
         let downAnimationClip: cc.AnimationClip = await this.loaderRes("game/role/animation/" + this.m_roleSuffix + "down");
         downAnimationClip.wrapMode = cc.WrapMode.Loop;
 
+
+        let helpAnimationClip: cc.AnimationClip = await this.loaderRes("game/role/animation/" + this.m_roleSuffix + "help");
+        helpAnimationClip.wrapMode = cc.WrapMode.Loop;
+
         this.m_animation = this.m_playerNode.addComponent(cc.Animation);
 
 
         this.m_animation.addClip(rightAnimationClip);
         this.m_animation.addClip(upAnimationClip);
         this.m_animation.addClip(downAnimationClip);
+        this.m_animation.addClip(helpAnimationClip);
 
         this.node.addChild(this.m_playerNode);
 
@@ -143,6 +148,13 @@ export default class Player extends cc.Component {
             this.m_frameFileName = "game/role/red";
         }
     }
+
+    public setHelpAnimation() :void {
+        this.m_direction = DIRECTION.NONE;
+        this.m_animation.play(this.m_roleSuffix + "help");
+        this.m_playerNode.scale = 0.7
+    }
+    
     public setMap(map): void {
         this.m_map = map;
         this.m_wallLayer = this.m_map.getLayer("wall");
@@ -297,6 +309,7 @@ export default class Player extends cc.Component {
         }
     }
 
+ 
     /**
      * 调整位置放置 碰撞检测用
      * @param direction 
