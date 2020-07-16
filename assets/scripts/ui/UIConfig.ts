@@ -34,4 +34,9 @@ export const uiConfig = [
         prefab: "prefab/game/gameWin",
         cache: true,
     },
+    {
+        name: "dialog",
+        prefab: "prefab/common/dialog",
+        cache: true,
+    },
 ]

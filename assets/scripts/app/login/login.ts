@@ -6,19 +6,24 @@ import CustomizeEvent from "../../event/CustomizeEvent";
 import ProtoManager from "../../manager/ProtoManager";
 import ProtoConstant from "../../constant/ProtoConstant";
 import LocalDataManager from "../../manager/LocalDataManager";
+import UIManager from "../../manager/UIManager";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class Login extends cc.Component {
 
-    @property(cc.Button)
-    m_accountButton = null;
 
-    protected async onLoad(): Promise<void> {
+
+    private m_account: string = "";
+    private m_password: string = "";
+
+    protected onLoad(): void {
         ProtoManager.getInstance().loaderProto();
         this.addEventListener();
+        this.addUIEvent();
     }
+
     protected onDestroy(): void {
         this.removeEventListener();
     }
@@ -30,6 +35,24 @@ export default class Login extends cc.Component {
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_LOGIN_R, this.onLogicR)
     }
 
+    private addUIEvent(): void {
+        let account = this.node.getChildByName("loginback").getChildByName("account").getComponent(cc.EditBox);
+        account.node.on("editing-did-ended", this.onAccountInputEnd, this);
+
+        let password = this.node.getChildByName("loginback").getChildByName("password").getComponent(cc.EditBox);
+        password.node.on("editing-did-ended", this.onPasswordInputEnd, this);
+
+        let loginButton = this.node.getChildByName("loginback").getChildByName("login").getComponent(cc.Button);
+        loginButton.node.on("click", this.onAccountClick, this);
+    }
+
+    private onAccountInputEnd(event): void {
+        this.m_account = event.string;
+    }
+    private onPasswordInputEnd(event): void {
+        this.m_password = event.string;
+    }
+
     private onLogicR(data): void {
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginR");
         let decodeData = msgObject.decode(data);
@@ -38,25 +61,18 @@ export default class Login extends cc.Component {
             LocalDataManager.getInstance().setSocketIp(decodeData.ip);
             NetWebsocket.getInstance().initWebSocket();
             cc.director.loadScene("lobbyScene");
+        } else {
+            UIManager.getInstance().addUI("dialog","账号或密码不正确");
         }
     }
 
     public onAccountClick(): void {
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginS");
-        let msg = msgObject.create({ account: "123123", password: "123123" })
+        let msg = msgObject.create({ account: this.m_account, password: this.m_password })
         let msgEncode = msgObject.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_S, msgEncode);
         NetHttp.getInstance().post(sendBuf);
     }
-
-    public onWexinClick(): void {
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginS");
-        let msg = msgObject.create({ account: "111111", password: "111111" })
-        let msgEncode = msgObject.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_S, msgEncode);
-        NetHttp.getInstance().post(sendBuf);
-    }
-
 
     public onToggleClick(event): void {
 

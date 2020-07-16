@@ -430,8 +430,8 @@ export default class UIManager {
             let sprite = node.addComponent(cc.Sprite);
             var mylogo = new cc.SpriteFrame(res);
             sprite.spriteFrame = mylogo;
-            node.setContentSize(cc.winSize);
-            node.color = cc.Color.BLACK;
+            node.setContentSize(cc.size(cc.winSize.width * 2,cc.winSize.height * 2));
+            node.color = cc.Color.GRAY;
             node.opacity = 100;
         });
         node.on(cc.Node.EventType.TOUCH_START, function (event: cc.Event.EventCustom) {
