@@ -6,6 +6,7 @@ import MsgUtil from "../../utils/MsgUtil";
 import ProtoConstant from "../../constant/ProtoConstant";
 import ProtoManager from "../../manager/ProtoManager";
 import MsgCmdConstant from "../../constant/MsgCmdConstant";
+import ResManager from "../../manager/ResManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -40,7 +41,6 @@ export default class Bomb extends cc.Component {
 
     private m_playerComponent: Player = null;
     private m_otherPlayer: OtherPlayer = null;
-
 
     private m_index: number = 0;
 
@@ -112,7 +112,6 @@ export default class Bomb extends cc.Component {
         this.m_wallLayer = this.m_map.getLayer("wall");
         this.m_itemLayer = this.m_map.getLayer("item");
     }
-
 
     public setPlayer(player: Player): void {
         this.m_playerComponent = player;
@@ -466,7 +465,7 @@ export default class Bomb extends cc.Component {
             }
         }
 
-        if(this.m_index == 0) {
+        if (this.m_index == 0) {
             let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "bombExplodeS");
             let msg = msgObject.create({ explodePath: explodePath });
             let msgEncode = msgObject.encode(msg).finish();
@@ -498,6 +497,7 @@ export default class Bomb extends cc.Component {
                 if (error) {
                     reject(error);
                 }
+                ResManager.getInstance().addPermanent(animationName, res);
                 resolve(res);
             })
         });
@@ -511,6 +511,7 @@ export default class Bomb extends cc.Component {
                 if (error) {
                     reject(error);
                 }
+                ResManager.getInstance().addPermanent("bomb", res);
                 resolve(res);
             })
         });
@@ -522,6 +523,7 @@ export default class Bomb extends cc.Component {
                 if (error) {
                     reject(error);
                 }
+                ResManager.getInstance().addPermanent("bomb", res);
                 resolve(res);
             })
         });

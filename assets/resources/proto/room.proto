@@ -10,7 +10,7 @@ message createRoomR {
 }
 
 message joinRoomS {
-	
+	int32 roomId = 1;
 }
 
 message joinRoomR {
@@ -47,5 +47,19 @@ message readyR {
 
 message gameStartR {
 	repeated player playerList = 1;
+}
+
+
+message roomListS {
+	
+}
+
+message roomListR {
+	repeated roomInfo roomList = 1;
+}
+
+message roomInfo {
+	int32 roomId = 1;
+	int32 roomState = 2;
 }
 

@@ -20,7 +20,7 @@ export default class ResManager {
         return this.m_instance;
     }
 
-    private constructor() { 
+    private constructor() {
 
     }
 
@@ -42,5 +42,9 @@ export default class ResManager {
 
     public getPermanentdByName(name: string): any {
         return this.m_permanentdMap[name];
+    }
+
+    public addPermanent(name: string, res: any): void {
+        this.m_permanentdMap[name] = res;
     }
 }

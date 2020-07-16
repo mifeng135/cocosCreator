@@ -34,6 +34,10 @@ export default class MsgCmdConstant {
     public static MSG_CMD_GAME_JOIN_ROOM_R: number = 4004;
     public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R: number = 4005;
 
+
+    public static MSG_CMD_GAME_ROOM_LIST_R:number = 4006;
+    public static MSG_CMD_GAME_ROOM_LIST_S:number = 4007;
+
     // public static MSG_CMD_GAME_ROOM_PLAYER_LIST_S:number = 4006;
     // public static MSG_CMD_GAME_ROOM_PLAYER_LIST_R:number = 4007;
 
@@ -55,6 +59,8 @@ export default class MsgCmdConstant {
 
     public static MSG_CMD_GAME_OVER_S = 4017;
     public static MSG_CMD_GAME_OVER_R = 4018;
+
+
 
     public static MSG_CMD_GAME_END: number = 4999;
 

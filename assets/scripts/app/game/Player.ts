@@ -400,7 +400,7 @@ export default class Player extends cc.Component {
     private forceMoveDirection(itemBox: cc.Rect, playerBox: cc.Rect, outBox: cc.Rect): boolean {
 
         if (this.m_direction == DIRECTION.UP || this.m_direction == DIRECTION.DOWN) {
-            if (outBox.width > 0 && outBox.width < 15) { //上下走的时候碰撞了 15 是否阈值
+            if (outBox.width > 0 && outBox.width < 20) { //上下走的时候碰撞了 15 是否阈值
                 if (itemBox.x > playerBox.x) { //碰撞体在人物的右侧
                     this.m_playerNode.x = this.m_playerNode.x - outBox.width - 6;
                 } else {//碰撞体在人物的左侧
@@ -411,7 +411,7 @@ export default class Player extends cc.Component {
         }
 
         if (this.m_direction == DIRECTION.LEFT || this.m_direction == DIRECTION.RIGHT) {
-            if (outBox.height > 0 && outBox.height < 15) { // 左右走的时候碰撞了
+            if (outBox.height > 0 && outBox.height < 20) { // 左右走的时候碰撞了
                 if (itemBox.y > playerBox.y) { //碰撞体在人物的上面
                     this.m_playerNode.y = this.m_playerNode.y - outBox.height - 10;
                 } else {//碰撞体在人物的下面
