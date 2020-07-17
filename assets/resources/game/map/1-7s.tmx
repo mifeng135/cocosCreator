@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="68" tileheight="64" nextobjectid="6">
+ <tileset firstgid="1" name="senlin" tilewidth="68" tileheight="64" tilecount="39" columns="3">
+  <image source="senlin.png" width="204" height="832"/>
+  <tile id="3">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="block" value="1"/>
+    <property name="move" value="1"/>
+    <property name="shadow" value="1"/>
+   </properties>
+  </tile>
+  <tile id="7">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="hide" value="1"/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="bg" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAfcOHAykCsBMQqeNTgwsJALADE4qN6B61eNSBWBWJ1PGoADWkGqg==
+  </data>
+ </layer>
+ <layer name="item" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJylUUEKADAI8rZ17f+PHYOEEDcG8yKkZRHwhyieRhuihfGwvj1ZPezLpp3wktt5tpmaS6TxRNVhmJnjoN/maa7bz90B6YVoDnoHd+65DvrjWy69C/CyAsM=
+  </data>
+ </layer>
+ <layer name="wall" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAfsGGhRdDUwPisaDQlYKDsRTYXnSZWnlzAgkZjsxdbuAyUvQChJwGF
+  </data>
+ </layer>
+ <layer name="fg" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjZoAAZiRakAEVwPhMaDQ2wE+ADwPMWGh62MsPNRedRrcXmzpK7AUBRjQam73YwmUw2UssAACINgHx
+  </data>
+ </layer>
+ <objectgroup name="players">
+  <object id="1" name="player1" x="105" y="165">
+   <properties>
+    <property name="playertype" value="player"/>
+   </properties>
+  </object>
+  <object id="2" name="player2" x="917" y="160">
+   <properties>
+    <property name="playertype" value="npc2"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

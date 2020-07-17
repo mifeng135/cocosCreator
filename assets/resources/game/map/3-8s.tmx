@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="68" tileheight="64" nextobjectid="6">
+ <tileset firstgid="1" name="ch" tilewidth="68" tileheight="64" tilecount="40" columns="5">
+  <image source="ch.png" width="340" height="512"/>
+  <tile id="2">
+   <properties>
+    <property name="block" value="1"/>
+    <property name="move" value="1"/>
+    <property name="shadow" value="1"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="block" value="1"/>
+    <property name="shadow" value="1"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="block" value="1"/>
+    <property name="shadow" value="1"/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="12">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="13">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="18">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="29">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="35">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="37">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="bg" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAfMA0wFqCRWnLdQa4dqmT6AZ+9tPQvMRgAp7MBog==
+  </data>
+ </layer>
+ <layer name="item" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJytkAEKwDAIAwPR/395FBTSYAejCwTEekQL/Cd+6MfwzsHOLy6rzjKr76bM9HwYhwML43XfwJ7rd/GF8Vxnp9zbe1uaO834P6t078SeQ6lbD1LLAVM=
+  </data>
+ </layer>
+ <layer name="wall" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgcQI5E8YGwl5dMO7Dpg5mvAqXVCLiHWoBe4QwAWkcBVQ==
+  </data>
+ </layer>
+ <layer name="fg" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAekCRRfCDs5cChVgqIpYFYBoc8Nn0w8+WBWAGIFQm4h1pgoMKZFAAA6YMBig==
+  </data>
+ </layer>
+ <objectgroup name="players">
+  <object id="1" name="player1" x="910" y="549">
+   <properties>
+    <property name="playertype" value="npc8"/>
+   </properties>
+  </object>
+  <object id="4" name="player2" x="913" y="98">
+   <properties>
+    <property name="playertype" value="npc8"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

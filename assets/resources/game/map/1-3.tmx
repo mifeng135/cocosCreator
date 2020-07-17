@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="13" height="10" tilewidth="68" tileheight="64" nextobjectid="4">
+ <tileset firstgid="1" name="senlin" tilewidth="68" tileheight="64" tilecount="39" columns="3">
+  <image source="senlin.png" width="204" height="832"/>
+  <tile id="3">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="block" value="1"/>
+    <property name="move" value="1"/>
+   </properties>
+  </tile>
+  <tile id="7">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="11">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="hide" value="1"/>
+   </properties>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="21">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="24">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="25">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="26">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="27">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="28">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="29">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+  <tile id="30">
+   <properties>
+    <property name="block" value="1"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="bg" width="13" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAdcFGA+ZDYykCsBMQqOOSxYWEgFgBicRLsVANiVSBWp9DthDA2/xDCxPoHOVyw+QdXuEkQKQ4An6sGNQ==
+  </data>
+ </layer>
+ <layer name="item" width="13" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAMcAAxJ5TNDaU5oeK4ACeR4vJINEhOCE1eCCouj0M9LjfA3CyPJs4NFcNmjzwDwn8wMzig4vjskUdSy8CA8CM+/yCrQwfY9BADuNFodAAAtKICug==
+  </data>
+ </layer>
+ <layer name="wall" width="13" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAOEEGj8anBpg6XHD7zsOlnwWMuNj4LVIwVizoeLOpZcbiJkD3IYoT8hKxODIjZCKiHATaoehiGhQW6vchhBVMLAPOvAoM=
+  </data>
+ </layer>
+ <layer name="fg" width="13" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYMAEgmg0NiCIg41PDpnNj6aHH4s6RjzmYuMzQsWY0MxF9g+yPUxYzCDGHmQxGI3LP+jqmLGowcZnRpODhQW6ebjCilQAAEduAg4=
+  </data>
+ </layer>
+ <objectgroup name="players">
+  <object id="1" name="player1" x="107" y="98">
+   <properties>
+    <property name="playertype" value="player"/>
+   </properties>
+  </object>
+  <object id="2" name="player2" x="785" y="90">
+   <properties>
+    <property name="playertype" value="npc2"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

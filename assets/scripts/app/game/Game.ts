@@ -59,6 +59,7 @@ export default class Game extends cc.Component {
 
         let layer = this.m_map.getLayer("fg");
         layer.node.zIndex = 20;
+
     }
 
     public addEventListener(): void {
