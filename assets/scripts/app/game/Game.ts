@@ -53,6 +53,11 @@ export default class Game extends cc.Component {
         this.removeEventListener();
     }
     private init(): void {
+        
+        let resMapName = LocalDataManager.getInstance().getGameMapResName();
+        let resData = ResManager.getInstance().getPermanentdByName(resMapName);
+        this.m_map.tmxAsset = resData;
+
         let players = this.m_map.getObjectGroup("players");
         this.m_playerPosition0 = players.getObject("player1");
         this.m_playerPosition1 = players.getObject("player2");
@@ -62,9 +67,6 @@ export default class Game extends cc.Component {
         layer.node.zIndex = 20;
 
 
-        let resMapName = LocalDataManager.getInstance().getGameMapResName();
-        let resData = ResManager.getInstance().getPermanentdByName(resMapName);
-        this.m_map.tmxAsset = resData;
     }
 
     public addEventListener(): void {
@@ -73,7 +75,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_R, this.onMsgRecvSynPosition, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_OVER_R, this.onMsgRecvGameOver, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_R, this.onMsgRecvBombExplode, this);
-
+        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_CREATE_PROP_R, this.onMsgRecvCreateProp, this);
     }
 
     private removeEventListener(): void {
@@ -82,6 +84,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_R, this.onMsgRecvSynPosition);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_OVER_R, this.onMsgRecvGameOver);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_R, this.onMsgRecvBombExplode);
+        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_CREATE_PROP_R, this.onMsgRecvCreateProp);
     }
 
     onMsgRecvOtherJoinRoom(data): void {
@@ -254,7 +257,7 @@ export default class Game extends cc.Component {
 
         let joystickOc: Joystick = this.m_joystick.getComponent(Joystick);
         joystickOc.setEnabledMove(false);
-        
+
         for (let i = 0; i < deadList.length; i++) {
             let id = deadList[i];
             if (this.m_player.getPlayerId() == id) {
@@ -265,6 +268,13 @@ export default class Game extends cc.Component {
                 this.m_otherPlayer.setHelpAnimation();
             }
         }
+    }
 
+    public onMsgRecvCreateProp(data): void {
+        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "createPropR");
+        let msg = msgOC.decode(data);
+        let propList = msg.propList
+
+        console.log(propList);
     }
 }

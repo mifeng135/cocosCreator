@@ -471,6 +471,14 @@ export default class Bomb extends cc.Component {
             let msgEncode = msgObject.encode(msg).finish();
             let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_S, msgEncode);
             NetWebsocket.getInstance().sendMsg(sendBuf);
+
+            if (this.m_removeTiledPath.length > 0) {
+                let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "createPropS");
+                let msg = msgObject.create({ removePath: this.m_removeTiledPath });
+                let msgEncode = msgObject.encode(msg).finish();
+                let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_CREATE_PROP_S, msgEncode);
+                NetWebsocket.getInstance().sendMsg(sendBuf);
+            }
         }
     }
 

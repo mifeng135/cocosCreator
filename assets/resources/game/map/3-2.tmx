@@ -113,12 +113,12 @@
   </data>
  </layer>
  <objectgroup name="players">
-  <object id="1" name="player1" x="849" y="597">
+  <object id="1" name="player1" x="849" y="600">
    <properties>
     <property name="playertype" value="npc7"/>
    </properties>
   </object>
-  <object id="5" name="player2" x="847" y="91">
+  <object id="5" name="player2" x="847" y="100">
    <properties>
     <property name="playertype" value="npc6"/>
    </properties>

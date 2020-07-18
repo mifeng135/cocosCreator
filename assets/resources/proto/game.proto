@@ -50,10 +50,19 @@ message bombExplodeR {
 	repeated int32 deadList = 1;
 }
 
+message createPropS {
+	repeated bombVec removePath = 1;
+}
 
+message createPropR {
+	repeated propVec propList = 1;
+}
+
+message propVec {
+	int32 x = 1;
+	int32 y = 2;
+	int32 type = 3;
+}
 message gameOverR {
 	int32 winId = 1;
 }
-
-
-

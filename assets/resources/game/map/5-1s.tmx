@@ -132,7 +132,7 @@
     <property name="playertype" value="player"/>
    </properties>
   </object>
-  <object id="4" name="player2" x="902" y="608">
+  <object id="4" name="player2" x="920" y="600">
    <properties>
     <property name="playertype" value="npc10"/>
    </properties>
