@@ -53,8 +53,7 @@ export default class Player extends cc.Component {
     private m_frameName: string = "red_standright";
     private m_frameFileName: string = "game/role/red";
 
-
-    private static m_msgCount: number = 0;
+    private m_stop: boolean = false;
 
 
     onLoad() {
@@ -153,6 +152,7 @@ export default class Player extends cc.Component {
     }
 
     public setHelpAnimation(): void {
+        this.m_stop = true;
         this.m_direction = DIRECTION.NONE;
         this.m_animation.play(this.m_roleSuffix + "help");
         this.m_playerNode.scale = 0.7
@@ -273,6 +273,10 @@ export default class Player extends cc.Component {
 
     protected update(dt) {
         if (this.m_animation == null) {
+            return;
+        }
+
+        if(this.m_stop) {
             return;
         }
         this.updatePlayerDirection();

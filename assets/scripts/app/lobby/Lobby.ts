@@ -6,6 +6,7 @@ import CustomizeEvent from "../../event/CustomizeEvent";
 import ProtoManager from "../../manager/ProtoManager";
 import ProtoConstant from "../../constant/ProtoConstant";
 import LocalDataManager from "../../manager/LocalDataManager";
+import ResManager from "../../manager/ResManager";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -61,18 +62,32 @@ export default class Lobby extends cc.Component {
         NetWebsocket.getInstance().sendMsg(sendBuf);
     }
 
-    private onMsgRecvCreateRoom(data): void {
+    private async onMsgRecvCreateRoom(data): Promise<void> {
         let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_ROOM, "createRoomR")
         let msg = msgOC.decode(data);
+        let mapRes = msg.mapRes
         if (msg.ret == 0) {
+            if(!ResManager.getInstance().getPermanentdByName(mapRes)) {
+                let resUrl = "game/map/" + mapRes;
+                let mapData = await this.loaderMap(resUrl);
+                ResManager.getInstance().addPermanent(mapRes, mapData);
+            }
+            LocalDataManager.getInstance().setGameMapResName(mapRes);
             cc.director.loadScene("gameScene");
         }
     }
 
-    private onMsgRecvJoinRoom(data): void {
+    private async onMsgRecvJoinRoom(data): Promise<void> {
         let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_ROOM, "joinRoomR")
         let msg = msgOC.decode(data);
+        let mapRes = msg.mapRes;
         if (msg.ret == 0) {
+            if(!ResManager.getInstance().getPermanentdByName(mapRes)) {
+                let resUrl = "game/map/" + mapRes;
+                let mapData = await this.loaderMap(resUrl);
+                ResManager.getInstance().addPermanent(mapRes, mapData);
+            }
+            LocalDataManager.getInstance().setGameMapResName(mapRes);
             cc.director.loadScene("gameScene");
         }
     }
@@ -97,4 +112,14 @@ export default class Lobby extends cc.Component {
         this.m_scrollContent.height = length * this.m_scrollItem.data.height;
     }
 
+    public loaderMap(name: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            cc.loader.loadRes(name, (error, res) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(res);
+            })
+        });
+    }
 }

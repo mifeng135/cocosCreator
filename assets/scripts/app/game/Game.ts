@@ -10,6 +10,7 @@ import NetWebsocket from "../../manager/NetWebsocket";
 import LocalDataManager from "../../manager/LocalDataManager";
 import Bomb from "./Bomb";
 import UIManager from "../../manager/UIManager";
+import ResManager from "../../manager/ResManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -60,6 +61,10 @@ export default class Game extends cc.Component {
         let layer = this.m_map.getLayer("fg");
         layer.node.zIndex = 20;
 
+
+        let resMapName = LocalDataManager.getInstance().getGameMapResName();
+        let resData = ResManager.getInstance().getPermanentdByName(resMapName);
+        this.m_map.tmxAsset = resData;
     }
 
     public addEventListener(): void {
@@ -247,6 +252,9 @@ export default class Game extends cc.Component {
         let msg = msgOC.decode(data);
         let deadList = msg.deadList;
 
+        let joystickOc: Joystick = this.m_joystick.getComponent(Joystick);
+        joystickOc.setEnabledMove(false);
+        
         for (let i = 0; i < deadList.length; i++) {
             let id = deadList[i];
             if (this.m_player.getPlayerId() == id) {
@@ -258,7 +266,5 @@ export default class Game extends cc.Component {
             }
         }
 
-        let joystickOc: Joystick = this.m_joystick.getComponent(Joystick);
-        joystickOc.setEnabledMove(false);
     }
 }

@@ -46,6 +46,8 @@ export default class OtherPlayer extends cc.Component {
     private m_frameName: string = "yellow_standright";
     private m_frameFileName: string = "game/role/yellow";
 
+    private m_stop: boolean = false;
+
     onLoad() {
 
     }
@@ -133,6 +135,7 @@ export default class OtherPlayer extends cc.Component {
     }
 
     public setHelpAnimation() :void {
+        this.m_stop = true;
         this.m_direction = DIRECTION.NONE;
         this.m_animation.play(this.m_roleSuffix + "help");
         this.m_playerNode.scale = 0.7
@@ -187,6 +190,9 @@ export default class OtherPlayer extends cc.Component {
             return;
         }
 
+        if(this.m_stop) {
+            return;
+        }
         let direction: cc.Vec2 = this.m_moveDirection;
         if (direction.x == 0 && direction.y == 0 && this.m_direction != DIRECTION.NONE) {
             this.m_animation.stop();

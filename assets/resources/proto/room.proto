@@ -7,6 +7,7 @@ message createRoomS {
 
 message createRoomR {
 	int32 ret = 1;
+	string mapRes = 2;
 }
 
 message joinRoomS {
@@ -15,6 +16,7 @@ message joinRoomS {
 
 message joinRoomR {
 	int32 ret = 1;
+	string mapRes = 2;
 }
 
 message playerLeftR {

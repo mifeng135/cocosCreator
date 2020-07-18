@@ -12,6 +12,8 @@ export default class LocalDataManager {
     private m_name: string = "";
     private m_ip: string = "";
 
+    private m_gameMapResName:string = "";
+
 
     public static getInstance(): LocalDataManager {
         if (this.m_instance == null) {
@@ -43,5 +45,13 @@ export default class LocalDataManager {
 
     public getPlayerName(): string {
         return this.m_name;
+    }
+
+    public setGameMapResName(resName:string) :void {
+        this.m_gameMapResName = resName;
+    }
+
+    public getGameMapResName() :string {
+        return this.m_gameMapResName;
     }
 }
