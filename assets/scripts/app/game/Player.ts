@@ -54,7 +54,7 @@ export default class Player extends cc.Component {
     private m_frameFileName: string = "game/role/red";
 
 
-    private static m_msgCount:number = 0;
+    private static m_msgCount: number = 0;
 
 
     onLoad() {
@@ -152,7 +152,7 @@ export default class Player extends cc.Component {
         }
     }
 
-    public setHelpAnimation() :void {
+    public setHelpAnimation(): void {
         this.m_direction = DIRECTION.NONE;
         this.m_animation.play(this.m_roleSuffix + "help");
         this.m_playerNode.scale = 0.7
@@ -165,10 +165,35 @@ export default class Player extends cc.Component {
 
 
         let mapSize = this.m_map.getMapSize();
-
-
         let tiledSize = this.m_map.getTileSize();
         //this.m_drawNode.clear();
+
+
+
+        for (let i = 0; i < mapSize.height; i++) {
+            let worldPos = this.tiledConverToWorldPos(cc.v2(-1, i));
+            let box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
+            //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
+            this.m_itemBox.push(box);
+
+            worldPos = this.tiledConverToWorldPos(cc.v2(mapSize.width, i));
+            box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
+            //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
+            this.m_itemBox.push(box);
+        }
+
+
+        for (let i = 0; i < mapSize.width; i++) {
+            let worldPos = this.tiledConverToWorldPos(cc.v2(i, 0));
+            let box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
+            //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
+            this.m_itemBox.push(box);
+
+            worldPos = this.tiledConverToWorldPos(cc.v2(i, mapSize.height));
+            box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
+            //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
+            this.m_itemBox.push(box);
+        }
 
         for (let i = 0; i < mapSize.width; i++) {
             for (let j = 0; j < mapSize.height; j++) {
@@ -179,6 +204,9 @@ export default class Player extends cc.Component {
                     //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
                     this.m_itemBox.push(box)
                 }
+
+
+
 
                 if (this.m_itemLayer.getTileGIDAt(pos)) {
                     let worldPos = this.tiledConverToWorldPos(pos);
@@ -312,7 +340,7 @@ export default class Player extends cc.Component {
         }
     }
 
- 
+
     /**
      * 调整位置放置 碰撞检测用
      * @param direction 
@@ -337,9 +365,10 @@ export default class Player extends cc.Component {
 
         let titedPosition = this.getTilePosition(nextPosition);
 
+
         var mapSize = this.m_map.getMapSize();
         if (titedPosition.x < 0 || titedPosition.x >= mapSize.width) return false;
-        if (titedPosition.y < 0 || titedPosition.y >= mapSize.height) return false;
+        if (titedPosition.y < 1 || titedPosition.y >= mapSize.height) return false;
 
 
         let playerPos = nextPosition;
