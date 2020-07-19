@@ -26,7 +26,7 @@ export default class Bomb extends cc.Component {
     private m_map: cc.TiledMap = null;
 
 
-    private m_bombPower: number = 2;
+    private m_bombPower: number = 1;
 
     private m_removeTiledPath: Array<cc.Vec2> = new Array(); // 雷爆炸的时候 需要移除的item
 
@@ -125,6 +125,9 @@ export default class Bomb extends cc.Component {
         this.m_index = index;
     }
 
+    public setPower(power: number): void {
+        this.m_bombPower = power;
+    }
     /**
      * 递归检测哪些雷要爆炸
      */
@@ -505,7 +508,6 @@ export default class Bomb extends cc.Component {
                 if (error) {
                     reject(error);
                 }
-                ResManager.getInstance().addPermanent(animationName, res);
                 resolve(res);
             })
         });
@@ -519,7 +521,6 @@ export default class Bomb extends cc.Component {
                 if (error) {
                     reject(error);
                 }
-                ResManager.getInstance().addPermanent("bomb", res);
                 resolve(res);
             })
         });
@@ -531,7 +532,6 @@ export default class Bomb extends cc.Component {
                 if (error) {
                     reject(error);
                 }
-                ResManager.getInstance().addPermanent("bomb", res);
                 resolve(res);
             })
         });

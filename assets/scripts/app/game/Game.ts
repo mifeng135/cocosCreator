@@ -11,6 +11,8 @@ import LocalDataManager from "../../manager/LocalDataManager";
 import Bomb from "./Bomb";
 import UIManager from "../../manager/UIManager";
 import ResManager from "../../manager/ResManager";
+import Prop from "./Prop";
+import PropManager from "./PropManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -53,7 +55,7 @@ export default class Game extends cc.Component {
         this.removeEventListener();
     }
     private init(): void {
-        
+
         let resMapName = LocalDataManager.getInstance().getGameMapResName();
         let resData = ResManager.getInstance().getPermanentdByName(resMapName);
         this.m_map.tmxAsset = resData;
@@ -66,7 +68,7 @@ export default class Game extends cc.Component {
         let layer = this.m_map.getLayer("fg");
         layer.node.zIndex = 20;
 
-
+        PropManager.getInstance().clear();
     }
 
     public addEventListener(): void {
@@ -76,6 +78,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_OVER_R, this.onMsgRecvGameOver, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_R, this.onMsgRecvBombExplode, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_CREATE_PROP_R, this.onMsgRecvCreateProp, this);
+        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, this.onMsgRecvTriggerProp, this);
     }
 
     private removeEventListener(): void {
@@ -85,6 +88,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_OVER_R, this.onMsgRecvGameOver);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_R, this.onMsgRecvBombExplode);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_CREATE_PROP_R, this.onMsgRecvCreateProp);
+        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, this.onMsgRecvTriggerProp);
     }
 
     onMsgRecvOtherJoinRoom(data): void {
@@ -170,10 +174,10 @@ export default class Game extends cc.Component {
         let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceR");
         let msg = msgOC.decode(data);
         let position = cc.v2(msg.x, msg.y);
-        this.addBombToMap(position);
+        this.addBombToMap(position, msg.power);
     }
 
-    public addBombToMap(position: cc.Vec2): void {
+    public addBombToMap(position: cc.Vec2, power: number): void {
 
         let playerId = LocalDataManager.getInstance().getPlayerId();
         let index = 0;
@@ -185,7 +189,6 @@ export default class Game extends cc.Component {
             }
         }
 
-
         let tiled = this.getTilePosition(position);
         let bomb = this.m_map.addComponent(Bomb);
         bomb.setBombPosition(position, tiled);
@@ -193,6 +196,7 @@ export default class Game extends cc.Component {
         bomb.setPlayer(this.m_player);
         bomb.setOtherPlayer(this.m_otherPlayer);
         bomb.setIndex(index);
+        bomb.setPower(power);
     }
 
     private getTilePosition(posInPixel) {
@@ -275,6 +279,29 @@ export default class Game extends cc.Component {
         let msg = msgOC.decode(data);
         let propList = msg.propList
 
-        console.log(propList);
+        if (propList.length > 0) {
+            let propData = propList[0];
+            let v2 = cc.v2(propData.x, propData.y);
+            let worldPosition = this.tiledConverToWorldPos(v2);
+            let prop = this.m_map.addComponent(Prop);
+            prop.init(worldPosition, propData.type, v2);
+        }
+    }
+
+    private tiledConverToWorldPos(pos: cc.Vec2): cc.Vec2 {
+        let tileSize = this.m_map.getTileSize();
+        let mapSize = this.m_map.getMapSize();
+        let x = pos.x * tileSize.width + tileSize.width / 2;
+        let y = (mapSize.height - pos.y) * tileSize.height - tileSize.height / 2;
+        return cc.v2(x, y);
+    }
+
+    public onMsgRecvTriggerProp(data): void {
+        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "triggerPropR");
+        let msg = msgOC.decode(data);
+        let tile = cc.v2(msg.x, msg.y);
+        let prop: Prop = PropManager.getInstance().getPropByTile(tile);
+        PropManager.getInstance().removeByTile(tile);
+        prop.getPropNode().removeFromParent();
     }
 }

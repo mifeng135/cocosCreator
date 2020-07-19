@@ -64,6 +64,9 @@ export default class MsgCmdConstant {
     public static MSG_CMD_GAME_CREATE_PROP_S = 4019;
     public static MSG_CMD_GAME_CREATE_PROP_R = 4020;
 
+    public static MSG_CMD_GAME_TRIGGER_PROP_S = 4021;
+    public static MSG_CMD_GAME_TRIGGER_PROP_R = 4022;
+
     public static MSG_CMD_GAME_END: number = 4999;
 
 }

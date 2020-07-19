@@ -17,11 +17,13 @@ message playerPosS {
 message playerBombPlaceR {
 	int32 x = 1;
 	int32 y = 2;
+	int32 power = 3;
 }
 
 message playerBombPlaceS {
 	int32 x = 1;
 	int32 y = 2;
+	int32 power = 3;
 }
 
 message playerSynPositionS {
@@ -62,6 +64,16 @@ message propVec {
 	int32 x = 1;
 	int32 y = 2;
 	int32 type = 3;
+}
+
+message triggerPropS {
+	int32 x = 1;
+	int32 y = 2;
+}
+
+message triggerPropR {
+	int32 x = 1;
+	int32 y = 2;
 }
 message gameOverR {
 	int32 winId = 1;

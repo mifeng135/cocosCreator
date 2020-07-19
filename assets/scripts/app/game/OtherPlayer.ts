@@ -52,12 +52,12 @@ export default class OtherPlayer extends cc.Component {
 
     }
 
-    async start(): Promise<void>  {
+    async start(): Promise<void> {
         let spriteAtlas: cc.SpriteAtlas = await this.loaderSpriteFrame(this.m_frameFileName);
         let spriteRigthFrame = spriteAtlas.getSpriteFrame(this.m_frameName)
 
         this.m_playerNode = new cc.Node("playerNode");
-        if(this.m_roleSuffix === "yellow_") {
+        if (this.m_roleSuffix === "yellow_") {
             this.m_playerNode.scale = 0.8
         }
         this.m_playerNode.zIndex = 11;
@@ -91,7 +91,7 @@ export default class OtherPlayer extends cc.Component {
 
         this.m_playerNode.setPosition(this.m_postioin);
 
-        if(this.m_initSpriteDirection == 1) {
+        if (this.m_initSpriteDirection == 1) {
             this.m_playerNode.scaleX = -1;
         }
     }
@@ -110,7 +110,7 @@ export default class OtherPlayer extends cc.Component {
     public getPlayerPosition(): cc.Vec2 {
         return this.m_playerNode.getPosition();
     }
-    
+
     public setPosition(pos: cc.Vec2): void {
         this.m_postioin = pos;
     }
@@ -134,13 +134,12 @@ export default class OtherPlayer extends cc.Component {
         }
     }
 
-    public setHelpAnimation() :void {
+    public setHelpAnimation(): void {
         this.m_stop = true;
         this.m_direction = DIRECTION.NONE;
         this.m_animation.play(this.m_roleSuffix + "help");
         this.m_playerNode.scale = 0.7
     }
-
 
     public updatePlayerPosition(position: cc.Vec2): void {
         this.m_sysArray.push(position);
@@ -152,7 +151,7 @@ export default class OtherPlayer extends cc.Component {
             return;
         }
 
-        
+
         let playerPos = this.tiledConverToWorldPos(tiled)
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceS");
         let msg = msgObject.create({ x: playerPos.x, y: playerPos.y });
@@ -190,7 +189,7 @@ export default class OtherPlayer extends cc.Component {
             return;
         }
 
-        if(this.m_stop) {
+        if (this.m_stop) {
             return;
         }
         let direction: cc.Vec2 = this.m_moveDirection;

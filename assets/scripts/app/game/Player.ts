@@ -8,6 +8,8 @@ import ProtoConstant from "../../constant/ProtoConstant";
 import MsgUtil from "../../utils/MsgUtil";
 import MsgCmdConstant from "../../constant/MsgCmdConstant";
 import NetWebsocket from "../../manager/NetWebsocket";
+import PropManager from "./PropManager";
+import Prop from "./Prop";
 
 const { ccclass, property } = cc._decorator;
 
@@ -39,7 +41,6 @@ export default class Player extends cc.Component {
 
     private m_moveDirection: cc.Vec2 = cc.v2(0, 0);
 
-
     private m_playerId: number = 0;
 
     private m_drawNode: cc.Graphics = null;
@@ -55,6 +56,7 @@ export default class Player extends cc.Component {
 
     private m_stop: boolean = false;
 
+    private m_bombPower: number = 1;
 
     onLoad() {
 
@@ -158,6 +160,14 @@ export default class Player extends cc.Component {
         this.m_playerNode.scale = 0.7
     }
 
+    public setPower(power: number): void {
+        this.m_bombPower = power;
+    }
+
+    public getPower(): number {
+        return this.m_bombPower;
+    }
+
     public setMap(map): void {
         this.m_map = map;
         this.m_wallLayer = this.m_map.getLayer("wall");
@@ -251,7 +261,7 @@ export default class Player extends cc.Component {
 
         let playerPos = cc.v2(x, y)
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceS");
-        let msg = msgObject.create({ x: playerPos.x, y: playerPos.y });
+        let msg = msgObject.create({ x: playerPos.x, y: playerPos.y, power: this.m_bombPower });
         let msgEncode = msgObject.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_S, msgEncode);
         NetWebsocket.getInstance().sendMsg(sendBuf);
@@ -276,7 +286,7 @@ export default class Player extends cc.Component {
             return;
         }
 
-        if(this.m_stop) {
+        if (this.m_stop) {
             return;
         }
         this.updatePlayerDirection();
@@ -415,6 +425,31 @@ export default class Player extends cc.Component {
 
         if (BombManager.getInstance().collide(playerBox)) {
             return false;
+        }
+
+        let prop: Prop = PropManager.getInstance().collide(playerBox);
+        if (prop) {
+            let type = prop.getType();
+            if (type == 0) {
+                if (this.m_bombPower < 6) {
+                    this.m_bombPower = this.m_bombPower + 1;
+                }
+            } else if (type == 1) {
+
+            } else {
+                this.m_playerSpeed = 6;
+            }
+
+
+            let tilePos = prop.getTilePosition();
+            let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "triggerPropS");
+            let msg = msgObject.create({ x: tilePos.x, y: tilePos.y, });
+            let msgEncode = msgObject.encode(msg).finish();
+            let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_S, msgEncode);
+            NetWebsocket.getInstance().sendMsg(sendBuf);
+
+            PropManager.getInstance().remove(prop);
+            prop.getPropNode().removeFromParent();
         }
         return true;
     }
