@@ -320,7 +320,7 @@ export default class Bomb extends cc.Component {
     private checkAround(nextPosition, flag) {
         var mapSize = this.m_map.getMapSize();
         if (nextPosition.x < 0 || nextPosition.x >= mapSize.width) return false;
-        if (nextPosition.y < 0 || nextPosition.y >= mapSize.height) return false;
+        if (nextPosition.y < 1 || nextPosition.y >= mapSize.height) return false;
 
         if (this.m_itemLayer.getTileGIDAt(nextPosition)) {
             if (!flag) {

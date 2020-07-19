@@ -97,7 +97,7 @@
   </data>
  </layer>
  <objectgroup name="players">
-  <object id="1" name="player1" x="101" y="99">
+  <object id="1" name="player1" x="101" y="90">
    <properties>
     <property name="playertype" value="player"/>
    </properties>

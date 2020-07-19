@@ -83,7 +83,7 @@
     <property name="playertype" value="npc8"/>
    </properties>
   </object>
-  <object id="4" name="player2" x="850" y="100">
+  <object id="4" name="player2" x="850" y="90">
    <properties>
     <property name="playertype" value="npc7"/>
    </properties>

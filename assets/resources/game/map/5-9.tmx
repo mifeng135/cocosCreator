@@ -155,12 +155,12 @@
   </data>
  </layer>
  <objectgroup name="players">
-  <object id="1" name="player1" x="442" y="102">
+  <object id="1" name="player1" x="442" y="90">
    <properties>
     <property name="playertype" value="player"/>
    </properties>
   </object>
-  <object id="2" name="player2" x="850" y="100">
+  <object id="2" name="player2" x="850" y="90">
    <properties>
     <property name="playertype" value="npc12"/>
    </properties>

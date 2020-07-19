@@ -183,7 +183,7 @@
       "array": [
         0,
         0,
-        528.2754963085076,
+        471.97529958444363,
         0,
         0,
         0,
@@ -1032,7 +1032,7 @@
     },
     "_enabled": true,
     "_tmxFile": {
-      "__uuid__": "698c35fb-dd54-42ca-b303-ddd22e4406dc"
+      "__uuid__": "ac0d0c85-d77b-444f-8e93-513819981c28"
     },
     "_id": "5aUaB0vV9H8LhwadQDs+Sj"
   },
@@ -1110,8 +1110,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -458,
-        -220,
+        -438,
+        -200,
         0,
         0,
         0,
@@ -1347,10 +1347,10 @@
     "alignMode": 0,
     "_target": null,
     "_alignFlags": 12,
-    "_left": 35,
+    "_left": 55,
     "_right": 0,
     "_top": 0,
-    "_bottom": 25,
+    "_bottom": 45,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
     "_isAbsLeft": true,
@@ -1407,8 +1407,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        476.7850000000001,
-        -234.62600000000003,
+        448,
+        -205,
         0,
         0,
         0,
@@ -1481,7 +1481,7 @@
         1,
         1,
         1,
-        1
+        0
       ]
     },
     "_eulerAngles": {
@@ -1577,8 +1577,8 @@
     ],
     "_N$interactable": true,
     "_N$enableAutoGrayEffect": false,
-    "_N$transition": 2,
-    "transition": 2,
+    "_N$transition": 3,
+    "transition": 3,
     "_N$normalColor": {
       "__type__": "cc.Color",
       "r": 230,
@@ -1666,9 +1666,9 @@
     "_target": null,
     "_alignFlags": 36,
     "_left": 0,
-    "_right": 41.214999999999975,
+    "_right": 70,
     "_top": 506.248,
-    "_bottom": 35.37399999999997,
+    "_bottom": 65,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
     "_isAbsLeft": true,

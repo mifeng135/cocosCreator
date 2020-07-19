@@ -388,7 +388,7 @@ export default class Player extends cc.Component {
         let titedPosition = this.getTilePosition(nextPosition);
 
 
-        var mapSize = this.m_map.getMapSize();
+        let mapSize = this.m_map.getMapSize();
         if (titedPosition.x < 0 || titedPosition.x >= mapSize.width) return false;
         if (titedPosition.y < 1 || titedPosition.y >= mapSize.height) return false;
 
