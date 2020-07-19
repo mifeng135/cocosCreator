@@ -17,6 +17,8 @@ export default class Prop extends cc.Component {
     private m_animation: cc.Animation = null;
 
     private m_tilePosition: cc.Vec2 = null;
+    private m_action: boolean = false;
+    private m_actionEndPos: cc.Vec2 = null;
 
     onLoad() {
 
@@ -45,6 +47,16 @@ export default class Prop extends cc.Component {
             this.m_animation.play("move")
         }
         PropManager.getInstance().add(this);
+
+        if (this.m_action) {
+            this.m_propNode.zIndex = 22;
+            let moveTo = cc.moveTo(0.5, this.m_actionEndPos);
+            let callFunc = cc.callFunc(() => {
+                this.m_propNode.zIndex = 10;
+            })
+            let sequence = cc.sequence(moveTo, callFunc)
+            this.m_propNode.runAction(sequence)
+        }
     }
 
     public init(position: cc.Vec2, type: number, tilePos: cc.Vec2): void {
@@ -53,6 +65,13 @@ export default class Prop extends cc.Component {
         this.m_tilePosition = tilePos;
     }
 
+    public initWithAction(beginPos: cc.Vec2, endPos: cc.Vec2, type: number, tilePos: cc.Vec2) {
+        this.m_type = type;
+        this.m_position = beginPos;
+        this.m_tilePosition = tilePos;
+        this.m_action = true;
+        this.m_actionEndPos = endPos;
+    }
     public getTilePosition(): cc.Vec2 {
         return this.m_tilePosition;
     }

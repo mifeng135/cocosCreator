@@ -66,6 +66,11 @@ export default class MsgCmdConstant {
 
     public static MSG_CMD_GAME_TRIGGER_PROP_S = 4021;
     public static MSG_CMD_GAME_TRIGGER_PROP_R = 4022;
+    
+
+    public static MSG_CMD_GAME_TILE_POSITION_SYN_S = 4023;
+    public static MSG_CMD_GAME_AIRPLANE_PROP_R = 4024;
+
 
     public static MSG_CMD_GAME_END: number = 4999;
 

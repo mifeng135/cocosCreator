@@ -50,6 +50,8 @@ export default class Player extends cc.Component {
 
     private m_itemBox: Array<cc.Rect> = new Array();
 
+    private m_collidePosition: Array<cc.Vec2> = new Array();
+
     private m_roleSuffix: string = ""
     private m_frameName: string = "red_standright";
     private m_frameFileName: string = "game/role/red";
@@ -58,7 +60,7 @@ export default class Player extends cc.Component {
 
     private m_bombPower: number = 1;
 
-    private m_bombMaxCount:number = 1;
+    private m_bombMaxCount: number = 1;
 
     onLoad() {
 
@@ -183,12 +185,15 @@ export default class Player extends cc.Component {
 
 
         for (let i = 0; i < mapSize.height; i++) {
-            let worldPos = this.tiledConverToWorldPos(cc.v2(-1, i));
+
+            let v2 = cc.v2(-1, i);
+            let worldPos = this.tiledConverToWorldPos(v2);
             let box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
             //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
             this.m_itemBox.push(box);
 
-            worldPos = this.tiledConverToWorldPos(cc.v2(mapSize.width, i));
+            v2 = cc.v2(mapSize.width, i);
+            worldPos = this.tiledConverToWorldPos(v2);
             box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
             //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
             this.m_itemBox.push(box);
@@ -196,12 +201,15 @@ export default class Player extends cc.Component {
 
 
         for (let i = 0; i < mapSize.width; i++) {
-            let worldPos = this.tiledConverToWorldPos(cc.v2(i, 0));
+
+            let v2 = cc.v2(i, 0);
+            let worldPos = this.tiledConverToWorldPos(v2);
             let box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
             //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
             this.m_itemBox.push(box);
 
-            worldPos = this.tiledConverToWorldPos(cc.v2(i, mapSize.height));
+            v2 = cc.v2(i, mapSize.height);
+            worldPos = this.tiledConverToWorldPos(v2);
             box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
             //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
             this.m_itemBox.push(box);
@@ -217,17 +225,20 @@ export default class Player extends cc.Component {
                     this.m_itemBox.push(box)
                 }
 
-
-
-
                 if (this.m_itemLayer.getTileGIDAt(pos)) {
                     let worldPos = this.tiledConverToWorldPos(pos);
                     let box = cc.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height)
                     //this.m_drawNode.rect(worldPos.x - tiledSize.width / 2, worldPos.y - tiledSize.height, tiledSize.width, tiledSize.height);
                     this.m_itemBox.push(box)
                 }
+
+                if (!this.m_wallLayer.getTileGIDAt(pos) && !this.m_itemLayer.getTileGIDAt(pos) && j > 0) {
+                    this.m_collidePosition.push(pos);
+                }
             }
         }
+
+        this.sendTilePositionSyn();
 
         //this.m_drawNode.fill();
     }
@@ -240,7 +251,7 @@ export default class Player extends cc.Component {
         this.m_playerNode.position = cc.v3(position);
     }
 
-    getTilePosition(posInPixel) {
+    private getTilePosition(posInPixel) {
         let tileSize = this.m_map.getTileSize();
         let mapSize = this.m_map.getMapSize();
         let mapTatolHeight = tileSize.height * mapSize.height;
@@ -249,10 +260,19 @@ export default class Player extends cc.Component {
         return cc.v2(x, y);
     }
 
+
+    private sendTilePositionSyn() {
+        let mapSize = this.m_map.getMapSize();
+        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "tilePositionSynS");
+        let msg = msgObject.create({ tileList: this.m_collidePosition, mapWidth: mapSize.width, mapHeight: mapSize.height });
+        let msgEncode = msgObject.encode(msg).finish();
+        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_TILE_POSITION_SYN_S, msgEncode);
+        NetWebsocket.getInstance().sendMsg(sendBuf);
+    }
     public putdownBomb(): void {
 
         let bombCount = BombManager.getInstance().getPlayerBombCount(this.m_playerId);
-        if(bombCount >= this.m_bombMaxCount) {
+        if (bombCount >= this.m_bombMaxCount) {
             return;
         }
 
@@ -518,6 +538,10 @@ export default class Player extends cc.Component {
                 break;
             }
         }
+
+        this.m_collidePosition.push(tiledPos);
+
+        this.sendTilePositionSyn();
     }
     public loaderRes(animationName: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {

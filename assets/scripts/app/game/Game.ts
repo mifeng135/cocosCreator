@@ -13,6 +13,7 @@ import UIManager from "../../manager/UIManager";
 import ResManager from "../../manager/ResManager";
 import Prop from "./Prop";
 import PropManager from "./PropManager";
+import BombManager from "./BombManager";
 
 const { ccclass, property } = cc._decorator;
 
@@ -44,11 +45,13 @@ export default class Game extends cc.Component {
     private m_roomPlayerList: Array<any> = new Array();
 
     private m_gameStart: boolean = false;
-
+    private m_airPlaneNode: cc.Node = null;
+    private m_airPlanePng: any = null;
 
     onLoad() {
         this.init();
         this.addEventListener();
+        this.loadAir();
     }
 
     onDestroy() {
@@ -69,6 +72,12 @@ export default class Game extends cc.Component {
         layer.node.zIndex = 20;
 
         PropManager.getInstance().clear();
+        BombManager.getInstance().clear();
+
+        this.m_airPlaneNode = this.node.getChildByName("map").getChildByName("airplane");
+        this.m_airPlaneNode.x = cc.winSize.width + this.m_airPlaneNode.getContentSize().width;
+        this.m_airPlaneNode.y = cc.winSize.height / 2;
+        this.m_airPlaneNode.zIndex = 21;
     }
 
     public addEventListener(): void {
@@ -79,6 +88,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_R, this.onMsgRecvBombExplode, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_CREATE_PROP_R, this.onMsgRecvCreateProp, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, this.onMsgRecvTriggerProp, this);
+        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_AIRPLANE_PROP_R, this.onMsgRecvAirPlaneProp, this);
     }
 
     private removeEventListener(): void {
@@ -89,6 +99,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_BOMB_EXPLODE_R, this.onMsgRecvBombExplode);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_CREATE_PROP_R, this.onMsgRecvCreateProp);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, this.onMsgRecvTriggerProp);
+        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_AIRPLANE_PROP_R, this.onMsgRecvAirPlaneProp);
     }
 
     onMsgRecvOtherJoinRoom(data): void {
@@ -244,7 +255,6 @@ export default class Game extends cc.Component {
         let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "gameOverR");
         let msg = msgOC.decode(data);
         let winId = msg.winId;
-
         if (winId == -1) {
             UIManager.getInstance().addUI("gameLose");
         }
@@ -304,5 +314,39 @@ export default class Game extends cc.Component {
         let prop: Prop = PropManager.getInstance().getPropByTile(tile);
         PropManager.getInstance().removeByTile(tile);
         prop.getPropNode().removeFromParent();
+    }
+
+    public onMsgRecvAirPlaneProp(data): void {
+        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "airplanePropR");
+        let msg = msgOC.decode(data);
+
+        let sprite = this.m_airPlaneNode.addComponent(cc.Sprite);
+        var airplane = new cc.SpriteFrame(this.m_airPlanePng);
+        sprite.spriteFrame = airplane;
+
+        let moveBy = cc.moveTo(2, cc.v2(-300, cc.winSize.height / 2));
+        this.m_airPlaneNode.runAction(moveBy);
+
+        this.scheduleOnce(this.createAirPlane.bind(this, msg), 1);
+    }
+
+    public createAirPlane(msg): void {
+        let propList = msg.propList;
+
+        for (let i = 0; i < propList.length; i++) {
+            let data = propList[i];
+            let v2 = cc.v2(data.x, data.y);
+            let endPos = this.tiledConverToWorldPos(v2);
+            let prop = this.m_map.addComponent(Prop);
+            let beginPos = this.m_airPlaneNode.getPosition();
+            prop.initWithAction(beginPos,endPos, data.type, v2);
+        }
+    }
+    private loadAir(): void {
+        cc.loader.loadRes("game/airplane", (error, res) => {
+            if (error) {
+            }
+            this.m_airPlanePng = res;
+        })
     }
 }

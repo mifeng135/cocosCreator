@@ -69,6 +69,10 @@ export default class BombManager {
         return count;
     }
 
+    public clear(): void {
+        this.m_bombList.length = 0;
+    }
+
     public collide(playerRect: cc.Rect): boolean {
         for (let i = 0; i < this.m_bombList.length; i++) {
             let bomb: Bomb = this.m_bombList[i];

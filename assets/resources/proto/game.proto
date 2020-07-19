@@ -77,6 +77,26 @@ message triggerPropR {
 	int32 x = 1;
 	int32 y = 2;
 }
+
+message tilePositionSynS {
+	int32 mapWidth = 1;
+	int32 mapHeight = 2;
+	repeated tileVec tileList = 3;
+}
+
+message tileVec {
+	int32 x = 1;
+	int32 y = 2;
+}
+
+message airplanePropR {
+	repeated vec propList = 1;
+}
+message vec {
+	int32 x = 1;
+	int32 y = 2;
+	int32 type = 3;
+}
 message gameOverR {
 	int32 winId = 1;
 }
