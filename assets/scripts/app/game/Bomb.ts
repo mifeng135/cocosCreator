@@ -41,6 +41,7 @@ export default class Bomb extends cc.Component {
 
     private m_playerComponent: Player = null;
     private m_otherPlayer: OtherPlayer = null;
+    private m_playerId: number = 0
 
     private m_index: number = 0;
 
@@ -128,7 +129,15 @@ export default class Bomb extends cc.Component {
     public setPower(power: number): void {
         this.m_bombPower = power;
     }
+    public setPlayerId(playerId: number): void {
+        this.m_playerId = playerId;
+    }
+
+    public getPlayerId(): number {
+        return this.m_playerId;
+    }
     /**
+     * 
      * 递归检测哪些雷要爆炸
      */
     private caleExplodeBombList() {

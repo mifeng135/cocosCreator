@@ -146,6 +146,7 @@ export default class OtherPlayer extends cc.Component {
     }
 
     public putdownBomb(): void {
+        
         let tiled = this.getTilePosition(this.m_playerNode.getPosition());
         if (BombManager.getInstance().contain(tiled)) {
             return;

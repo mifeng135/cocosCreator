@@ -174,10 +174,10 @@ export default class Game extends cc.Component {
         let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceR");
         let msg = msgOC.decode(data);
         let position = cc.v2(msg.x, msg.y);
-        this.addBombToMap(position, msg.power);
+        this.addBombToMap(position, msg.power, msg.playerId);
     }
 
-    public addBombToMap(position: cc.Vec2, power: number): void {
+    public addBombToMap(position: cc.Vec2, power: number, id: number): void {
 
         let playerId = LocalDataManager.getInstance().getPlayerId();
         let index = 0;
@@ -197,6 +197,7 @@ export default class Game extends cc.Component {
         bomb.setOtherPlayer(this.m_otherPlayer);
         bomb.setIndex(index);
         bomb.setPower(power);
+        bomb.setPlayerId(id)
     }
 
     private getTilePosition(posInPixel) {

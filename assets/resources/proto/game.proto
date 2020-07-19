@@ -18,12 +18,14 @@ message playerBombPlaceR {
 	int32 x = 1;
 	int32 y = 2;
 	int32 power = 3;
+	int32 playerId = 4;
 }
 
 message playerBombPlaceS {
 	int32 x = 1;
 	int32 y = 2;
 	int32 power = 3;
+	int32 playerId = 4;
 }
 
 message playerSynPositionS {

@@ -57,6 +57,18 @@ export default class BombManager {
         }
         return null;
     }
+
+    public getPlayerBombCount(playerId: number): number {
+        let count = 0;
+        for (let i = 0; i < this.m_bombList.length; i++) {
+            let bomb: Bomb = this.m_bombList[i];
+            if (bomb.getPlayerId() == playerId) {
+                count = count + 1;
+            }
+        }
+        return count;
+    }
+
     public collide(playerRect: cc.Rect): boolean {
         for (let i = 0; i < this.m_bombList.length; i++) {
             let bomb: Bomb = this.m_bombList[i];

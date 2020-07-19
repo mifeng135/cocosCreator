@@ -58,6 +58,8 @@ export default class Player extends cc.Component {
 
     private m_bombPower: number = 1;
 
+    private m_bombMaxCount:number = 1;
+
     onLoad() {
 
     }
@@ -248,6 +250,12 @@ export default class Player extends cc.Component {
     }
 
     public putdownBomb(): void {
+
+        let bombCount = BombManager.getInstance().getPlayerBombCount(this.m_playerId);
+        if(bombCount >= this.m_bombMaxCount) {
+            return;
+        }
+
         let tiled = this.getTilePosition(this.m_playerNode.getPosition());
         if (BombManager.getInstance().contain(tiled)) {
             return;
@@ -261,7 +269,7 @@ export default class Player extends cc.Component {
 
         let playerPos = cc.v2(x, y)
         let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceS");
-        let msg = msgObject.create({ x: playerPos.x, y: playerPos.y, power: this.m_bombPower });
+        let msg = msgObject.create({ x: playerPos.x, y: playerPos.y, power: this.m_bombPower, playerId: this.m_playerId });
         let msgEncode = msgObject.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_S, msgEncode);
         NetWebsocket.getInstance().sendMsg(sendBuf);
@@ -435,9 +443,9 @@ export default class Player extends cc.Component {
                     this.m_bombPower = this.m_bombPower + 1;
                 }
             } else if (type == 1) {
-
+                this.m_bombMaxCount = this.m_bombMaxCount + 1;
             } else {
-                this.m_playerSpeed = 6;
+                this.m_playerSpeed = 5;
             }
 
 
