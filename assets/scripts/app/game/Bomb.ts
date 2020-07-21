@@ -424,12 +424,17 @@ export default class Bomb extends cc.Component {
 
     private createSpriteBomb(position: cc.Vec2, spirteFrame: string, index: number): void {
         let worldPosition = this.tiledTranlateToWorldPos(position);
+
+        let localPosition = this.tiledTranlateToWorldPos(this.m_bombTiledPos);
         let bomeSpriteNode = new cc.Node("bomeSprite");
         let sprite = bomeSpriteNode.addComponent(cc.Sprite);
         sprite.spriteFrame = this.m_bombSpriteAtlas.getSpriteFrame(spirteFrame);
-        bomeSpriteNode.setPosition(worldPosition);
+        bomeSpriteNode.setPosition(localPosition);
         this.m_bombSpriteNodeArray.push(bomeSpriteNode);
         this.node.addChild(bomeSpriteNode);
+
+        let moveTo = cc.moveTo(0.02, worldPosition);
+        bomeSpriteNode.runAction(moveTo);
     }
 
     private clearBombSpriteArray(): void {
