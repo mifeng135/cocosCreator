@@ -7,6 +7,7 @@ import ProtoManager from "../../manager/ProtoManager";
 import ProtoConstant from "../../constant/ProtoConstant";
 import LocalDataManager from "../../manager/LocalDataManager";
 import UIManager from "../../manager/UIManager";
+import TestTableView from "./TestTableView";
 
 const { ccclass, property } = cc._decorator;
 
@@ -24,6 +25,15 @@ export default class Login extends cc.Component {
         this.addUIEvent();
     }
 
+    start() {
+        let tableView: TestTableView = this.node.getChildByName("scrollview").getComponent(TestTableView);
+
+        let data: Array<any> = new Array();
+        for (let i = 0; i < 1000; i++) {
+            data.push(i);
+        }
+        tableView.setData(data);
+    }
     protected onDestroy(): void {
         this.removeEventListener();
     }
@@ -62,7 +72,7 @@ export default class Login extends cc.Component {
             NetWebsocket.getInstance().initWebSocket();
             cc.director.loadScene("lobbyScene");
         } else {
-            UIManager.getInstance().addUI("dialog","账号或密码不正确");
+            UIManager.getInstance().addUI("dialog", "账号或密码不正确");
         }
     }
 
