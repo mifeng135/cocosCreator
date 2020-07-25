@@ -28,12 +28,18 @@
     ]
   ],
   "excluded-modules": [
+    "Collider",
+    "Dynamic Atlas",
+    "DragonBones",
+    "Graphics",
+    "Mask",
     "MotionStreak",
     "Native Socket",
     "Physics",
     "PageView",
     "PageViewIndicator",
     "ParticleSystem",
+    "Slider",
     "Spine Skeleton",
     "StudioComponent",
     "VideoPlayer",

@@ -8775,7 +8775,7 @@ BufferWriter._configure();
 
 
 (function webpackUniversalModuleDefinition(root, factory) {
-	root["eval5"] = factory();
+	window["eval5"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
