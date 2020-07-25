@@ -89,6 +89,8 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_CREATE_PROP_R, this.onMsgRecvCreateProp, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, this.onMsgRecvTriggerProp, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_AIRPLANE_PROP_R, this.onMsgRecvAirPlaneProp, this);
+        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_EXIT_ROOM_R, this.onMsgRecveExitRoom, this);
+        
     }
 
     private removeEventListener(): void {
@@ -100,6 +102,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_CREATE_PROP_R, this.onMsgRecvCreateProp);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, this.onMsgRecvTriggerProp);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_AIRPLANE_PROP_R, this.onMsgRecvAirPlaneProp);
+        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_EXIT_ROOM_R, this.onMsgRecveExitRoom);
     }
 
     onMsgRecvOtherJoinRoom(data): void {
@@ -178,6 +181,16 @@ export default class Game extends cc.Component {
         let msg = msgObject.create({})
         let msgEncode = msgObject.encode(msg).finish();
         let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_READY_S, msgEncode);
+        NetWebsocket.getInstance().sendMsg(sendBuf);
+
+        this.node.getChildByName("ready").active = false;
+    }
+
+    onEixtClick(): void {
+        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "exitRoomS");
+        let msg = msgObject.create({})
+        let msgEncode = msgObject.encode(msg).finish();
+        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_EXIT_ROOM_S, msgEncode);
         NetWebsocket.getInstance().sendMsg(sendBuf);
     }
 
@@ -339,9 +352,16 @@ export default class Game extends cc.Component {
             let endPos = this.tiledConverToWorldPos(v2);
             let prop = this.m_map.addComponent(Prop);
             let beginPos = this.m_airPlaneNode.getPosition();
-            prop.initWithAction(beginPos,endPos, data.type, v2);
+            prop.initWithAction(beginPos, endPos, data.type, v2);
         }
     }
+
+    public onMsgRecveExitRoom(data): void {
+        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "exitRoomR");
+        let msg = msgOC.decode(data);
+        cc.director.loadScene("lobbyScene");
+    }
+
     private loadAir(): void {
         cc.loader.loadRes("game/airplane", (error, res) => {
             if (error) {

@@ -72,6 +72,10 @@ export default class MsgCmdConstant {
     public static MSG_CMD_GAME_AIRPLANE_PROP_R = 4024;
 
 
+    public static MSG_CMD_GAME_EXIT_ROOM_S = 4025;
+    public static MSG_CMD_GAME_EXIT_ROOM_R = 4026;
+
+
     public static MSG_CMD_GAME_END: number = 4999;
 
 }

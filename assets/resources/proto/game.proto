@@ -97,6 +97,14 @@ message vec {
 	int32 y = 2;
 	int32 type = 3;
 }
+
+message exitRoomS {
+
+}
+
+message exitRoomR {
+	
+}
 message gameOverR {
 	int32 winId = 1;
 }
