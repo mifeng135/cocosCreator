@@ -191,6 +191,7 @@ export default class UIManager {
      */
     private loadUI(uiName: string, completeCallback: (uiView: BaseUIView) => void, param?: any): void {
 
+
         let baseUIView: BaseUIView = this.m_uiCache.get(uiName);
         if (baseUIView) {
             completeCallback(baseUIView);

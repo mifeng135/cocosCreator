@@ -1,7 +1,3 @@
-
-const { ccclass, property } = cc._decorator;
-
-@ccclass
 export default class ProtoManager {
 
     private m_protodMap = {};
@@ -16,7 +12,6 @@ export default class ProtoManager {
     }
 
     private constructor() {
-
     }
 
     public loaderProto(): void {

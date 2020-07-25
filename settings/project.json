@@ -27,8 +27,21 @@
       false
     ]
   ],
-  "excluded-modules": [],
-  "last-module-event-record-time": 1594287357699,
+  "excluded-modules": [
+    "MotionStreak",
+    "Native Socket",
+    "Physics",
+    "PageView",
+    "PageViewIndicator",
+    "ParticleSystem",
+    "Spine Skeleton",
+    "StudioComponent",
+    "VideoPlayer",
+    "WebView",
+    "3D",
+    "3D Primitive"
+  ],
+  "last-module-event-record-time": 1595644591015,
   "design-resolution-width": 960,
   "design-resolution-height": 640,
   "fit-width": false,
