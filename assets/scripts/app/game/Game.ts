@@ -90,7 +90,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, this.onMsgRecvTriggerProp, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_AIRPLANE_PROP_R, this.onMsgRecvAirPlaneProp, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_EXIT_ROOM_R, this.onMsgRecveExitRoom, this);
-        
+
     }
 
     private removeEventListener(): void {
@@ -333,13 +333,18 @@ export default class Game extends cc.Component {
         let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "airplanePropR");
         let msg = msgOC.decode(data);
 
+
+        let position = this.m_airPlaneNode.getPosition();
         let sprite = this.m_airPlaneNode.addComponent(cc.Sprite);
         var airplane = new cc.SpriteFrame(this.m_airPlanePng);
         sprite.spriteFrame = airplane;
 
-        let moveBy = cc.moveTo(2, cc.v2(-300, cc.winSize.height / 2));
-        this.m_airPlaneNode.runAction(moveBy);
-
+        let moveBy = cc.moveTo(2, cc.v2(-400, cc.winSize.height / 2));
+        let func = cc.callFunc(() => {
+            this.m_airPlaneNode.setPosition(position);
+        })
+        let sequenceAction = cc.sequence(moveBy, func);
+        this.m_airPlaneNode.runAction(sequenceAction);
         this.scheduleOnce(this.createAirPlane.bind(this, msg), 1);
     }
 
