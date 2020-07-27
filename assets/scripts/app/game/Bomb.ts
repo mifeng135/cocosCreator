@@ -46,8 +46,11 @@ export default class Bomb extends cc.Component {
     private m_index: number = 0;
 
     async onLoad() {
-
-        this.m_bombSpriteAtlas = await this.loaderBombSpriteFrame();
+        if (ResManager.getInstance().getPermanentdByName("bomb")) {
+            this.m_bombSpriteAtlas = ResManager.getInstance().getPermanentdByName("bomb");
+        } else {
+            this.m_bombSpriteAtlas = await this.loaderBombSpriteFrame();
+        }
 
         let spriteAtlas: cc.SpriteAtlas = await this.loaderSpriteFrame();
         let spriteFrame = spriteAtlas.getSpriteFrame("black_0")
@@ -546,6 +549,8 @@ export default class Bomb extends cc.Component {
                 if (error) {
                     reject(error);
                 }
+
+                ResManager.getInstance().addPermanent("bomb", res);
                 resolve(res);
             })
         });

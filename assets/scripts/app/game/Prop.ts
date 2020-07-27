@@ -1,4 +1,5 @@
 import PropManager from "./PropManager";
+import ResManager from "../../manager/ResManager";
 
 
 const { ccclass, property } = cc._decorator;
@@ -25,7 +26,12 @@ export default class Prop extends cc.Component {
     }
 
     async start() {
-        this.m_animationArray = await this.loaderRes();
+
+        if (ResManager.getInstance().getPermanentdByName("prop")) {
+            this.m_animationArray = ResManager.getInstance().getPermanentdByName("prop")
+        } else {
+            this.m_animationArray = await this.loaderRes();
+        }
         this.m_propNode = new cc.Node("propNode");
         this.m_propNode.addComponent(cc.Sprite);
 
@@ -88,6 +94,8 @@ export default class Prop extends cc.Component {
                 if (error) {
                     reject(error);
                 }
+
+                ResManager.getInstance().addPermanent("prop", res);
                 resolve(res);
             })
         });
