@@ -28,5 +28,4 @@ export default class Dialog extends BaseUIView {
     private onButtonClick(): void {
         UIManager.getInstance().closeUI();
     }
-
 }

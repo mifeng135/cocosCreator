@@ -1,18 +1,5 @@
-import ProtoManager from "../../manager/ProtoManager";
-import ProtoConstant from "../../constant/ProtoConstant";
-import MsgUtil from "../../utils/MsgUtil";
 import MsgCmdConstant from "../../constant/MsgCmdConstant";
 import NetWebsocket from "../../manager/NetWebsocket";
-
-// Learn TypeScript:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const { ccclass, property } = cc._decorator;
 
@@ -36,10 +23,8 @@ export default class LobbyRoomItem extends cc.Component {
     }
 
     public joinRoom(): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_ROOM, "joinRoomS")
-        let msg = msgOC.create({ roomId: "" });
-        let msgEncode = msgOC.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_JOIN_ROOM_S, msgEncode)
-        NetWebsocket.getInstance().sendMsg(sendBuf);
+        let data = {};
+        data["roomId"] = "";
+        NetWebsocket.getInstance().sendMsg(MsgCmdConstant.MSG_CMD_GAME_JOIN_ROOM_S, data);
     }
 }

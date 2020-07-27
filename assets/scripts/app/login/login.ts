@@ -1,13 +1,11 @@
 import NetWebsocket from "../../manager/NetWebsocket";
-import MsgUtil from "./../../utils/MsgUtil"
 import NetHttp from "../../manager/NetHttp";
 import MsgCmdConstant from "../../constant/MsgCmdConstant";
 import CustomizeEvent from "../../event/CustomizeEvent";
 import ProtoManager from "../../manager/ProtoManager";
-import ProtoConstant from "../../constant/ProtoConstant";
 import LocalDataManager from "../../manager/LocalDataManager";
 import UIManager from "../../manager/UIManager";
-import TestTableView from "./TestTableView";
+import MsgFactory from "../../msg/MsgFactory";
 
 const { ccclass, property } = cc._decorator;
 
@@ -20,20 +18,13 @@ export default class Login extends cc.Component {
     private m_password: string = "";
 
     protected onLoad(): void {
+        MsgFactory.getInstance().init();
         ProtoManager.getInstance().loaderProto();
+
         this.addEventListener();
         this.addUIEvent();
     }
 
-    start() {
-        let tableView: TestTableView = this.node.getChildByName("scrollview").getComponent(TestTableView);
-
-        let data: Array<any> = new Array();
-        for (let i = 0; i < 1000; i++) {
-            data.push(i);
-        }
-        tableView.setData(data);
-    }
     protected onDestroy(): void {
         this.removeEventListener();
     }
@@ -64,11 +55,9 @@ export default class Login extends cc.Component {
     }
 
     private onLogicR(data): void {
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginR");
-        let decodeData = msgObject.decode(data);
-        if (decodeData.ret == MsgCmdConstant.MSG_RET_CODE_SUCCESS) {
-            LocalDataManager.getInstance().setPlayerInfo(decodeData.id, decodeData.name);
-            LocalDataManager.getInstance().setSocketIp(decodeData.ip);
+        if (data.ret == MsgCmdConstant.MSG_RET_CODE_SUCCESS) {
+            LocalDataManager.getInstance().setPlayerInfo(data.id, data.name);
+            LocalDataManager.getInstance().setSocketIp(data.ip);
             NetWebsocket.getInstance().initWebSocket();
             cc.director.loadScene("lobbyScene");
         } else {
@@ -77,11 +66,10 @@ export default class Login extends cc.Component {
     }
 
     public onAccountClick(): void {
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginS");
-        let msg = msgObject.create({ account: this.m_account, password: this.m_password })
-        let msgEncode = msgObject.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_S, msgEncode);
-        NetHttp.getInstance().post(sendBuf);
+        let data = {}
+        data["account"] = this.m_account;
+        data["password"] = this.m_password;
+        NetHttp.getInstance().post(MsgCmdConstant.MSG_CMD_LOGIN_S, data);
     }
 
     public onToggleClick(event): void {

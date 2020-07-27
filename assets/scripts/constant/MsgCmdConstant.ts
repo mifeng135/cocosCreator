@@ -32,32 +32,29 @@ export default class MsgCmdConstant {
     public static MSG_CMD_GAME_CREATE_ROOM_R: number = 4002;
     public static MSG_CMD_GAME_JOIN_ROOM_S: number = 4003;
     public static MSG_CMD_GAME_JOIN_ROOM_R: number = 4004;
-    public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R: number = 4005;
 
 
-    public static MSG_CMD_GAME_ROOM_LIST_R:number = 4006;
-    public static MSG_CMD_GAME_ROOM_LIST_S:number = 4007;
+    public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R: number = 4005; //这个暂时没有用到
 
-    // public static MSG_CMD_GAME_ROOM_PLAYER_LIST_S:number = 4006;
-    // public static MSG_CMD_GAME_ROOM_PLAYER_LIST_R:number = 4007;
+    public static MSG_CMD_GAME_ROOM_LIST_R: number = 4006;
+    public static MSG_CMD_GAME_ROOM_LIST_S: number = 4007;
 
+    public static MSG_CMD_GAME_READY_S: number = 4008;
+    public static MSG_CMD_GAME_READY_R: number = 4009;
 
-    public static MSG_CMD_GAME_READY_S:number = 4008;
-    public static MSG_CMD_GAME_READY_R:number = 4009;
+    public static MSG_CMD_GAME_START_R: number = 4010;
 
-    public static MSG_CMD_GAME_START_R:number = 4010;
-
-    public static MSG_CMD_PLAYER_BOMB_PLACE_S:number = 4011;
-    public static MSG_CMD_PLAYER_BOMB_PLACE_R:number = 4012;
+    public static MSG_CMD_PLAYER_BOMB_PLACE_S: number = 4011;
+    public static MSG_CMD_PLAYER_BOMB_PLACE_R: number = 4012;
 
 
-    public static MSG_CMD_BOMB_EXPLODE_S:number = 4013;
-    public static MSG_CMD_BOMB_EXPLODE_R:number = 4014;
+    public static MSG_CMD_BOMB_EXPLODE_S: number = 4013;
+    public static MSG_CMD_BOMB_EXPLODE_R: number = 4014;
 
     public static MSG_CMD_PLAYER_SYN_POSITION_S = 4015;
     public static MSG_CMD_PLAYER_SYN_POSITION_R = 4016;
 
-    public static MSG_CMD_GAME_OVER_S = 4017;
+    public static MSG_CMD_GAME_OVER_S = 4017; //这个暂时没有用到
     public static MSG_CMD_GAME_OVER_R = 4018;
 
 
@@ -66,7 +63,7 @@ export default class MsgCmdConstant {
 
     public static MSG_CMD_GAME_TRIGGER_PROP_S = 4021;
     public static MSG_CMD_GAME_TRIGGER_PROP_R = 4022;
-    
+
 
     public static MSG_CMD_GAME_TILE_POSITION_SYN_S = 4023;
     public static MSG_CMD_GAME_AIRPLANE_PROP_R = 4024;

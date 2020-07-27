@@ -2,10 +2,7 @@ import Game from "./Game";
 import CustomizeEvent from "../../event/CustomizeEvent";
 import Bomb from "./Bomb";
 import BombManager from "./BombManager";
-import ProtoManager from "../../manager/ProtoManager";
-import ProtoConstant from "../../constant/ProtoConstant";
 import MsgCmdConstant from "../../constant/MsgCmdConstant";
-import MsgUtil from "../../utils/MsgUtil";
 import NetWebsocket from "../../manager/NetWebsocket";
 
 const { ccclass, property } = cc._decorator;
@@ -146,19 +143,15 @@ export default class OtherPlayer extends cc.Component {
     }
 
     public putdownBomb(): void {
-        
         let tiled = this.getTilePosition(this.m_playerNode.getPosition());
         if (BombManager.getInstance().contain(tiled)) {
             return;
         }
-
-
         let playerPos = this.tiledConverToWorldPos(tiled)
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceS");
-        let msg = msgObject.create({ x: playerPos.x, y: playerPos.y });
-        let msgEncode = msgObject.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_S, msgEncode);
-        NetWebsocket.getInstance().sendMsg(sendBuf);
+        let data = {}
+        data["x"] = playerPos.x;
+        data["y"] = playerPos.y;
+        NetWebsocket.getInstance().sendMsg(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_S, data);
     }
 
 

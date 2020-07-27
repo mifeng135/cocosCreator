@@ -1,11 +1,5 @@
-import Game from "./Game";
-import CustomizeEvent from "../../event/CustomizeEvent";
-import Bomb from "./Bomb";
 import BombManager from "./BombManager";
 import Joystick from "../../commonUI/Joystick";
-import ProtoManager from "../../manager/ProtoManager";
-import ProtoConstant from "../../constant/ProtoConstant";
-import MsgUtil from "../../utils/MsgUtil";
 import MsgCmdConstant from "../../constant/MsgCmdConstant";
 import NetWebsocket from "../../manager/NetWebsocket";
 import PropManager from "./PropManager";
@@ -124,11 +118,11 @@ export default class Player extends cc.Component {
         return this.m_playerNode.getPosition();
     }
     private sendSynPosition(): void {
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerSynPositionS");
-        let msg = msgObject.create({ x: this.m_playerNode.x, y: this.m_playerNode.y, direction: this.m_direction });
-        let msgEncode = msgObject.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_S, msgEncode);
-        NetWebsocket.getInstance().sendMsg(sendBuf);
+        let data = {}
+        data["x"] = this.m_playerNode.x;
+        data["y"] = this.m_playerNode.y;
+        data["direction"] = this.m_direction;
+        NetWebsocket.getInstance().sendMsg(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_S, data);
     }
     public setPlayerId(id: number): void {
         this.m_playerId = id;
@@ -263,11 +257,11 @@ export default class Player extends cc.Component {
 
     private sendTilePositionSyn() {
         let mapSize = this.m_map.getMapSize();
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "tilePositionSynS");
-        let msg = msgObject.create({ tileList: this.m_collidePosition, mapWidth: mapSize.width, mapHeight: mapSize.height });
-        let msgEncode = msgObject.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_TILE_POSITION_SYN_S, msgEncode);
-        NetWebsocket.getInstance().sendMsg(sendBuf);
+        let data = {}
+        data["tileList"] = this.m_collidePosition;
+        data["mapWidth"] = mapSize.width;
+        data["mapHeight"] = mapSize.height;
+        NetWebsocket.getInstance().sendMsg(MsgCmdConstant.MSG_CMD_GAME_TILE_POSITION_SYN_S, data);
     }
     public putdownBomb(): void {
 
@@ -286,13 +280,14 @@ export default class Player extends cc.Component {
         let mapSize = this.m_map.getMapSize();
         let x = tiled.x * tileSize.width + tileSize.width / 2;
         let y = (mapSize.height - tiled.y) * tileSize.height - tileSize.height / 2;
-
         let playerPos = cc.v2(x, y)
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceS");
-        let msg = msgObject.create({ x: playerPos.x, y: playerPos.y, power: this.m_bombPower, playerId: this.m_playerId });
-        let msgEncode = msgObject.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_S, msgEncode);
-        NetWebsocket.getInstance().sendMsg(sendBuf);
+
+        let data = {}
+        data["x"] = playerPos.x;
+        data["y"] = playerPos.y;
+        data["power"] = this.m_bombPower;
+        data["playerId"] = this.m_playerId;
+        NetWebsocket.getInstance().sendMsg(MsgCmdConstant.MSG_CMD_PLAYER_BOMB_PLACE_S, data);
     }
 
     public updateMoveDirection(direction: number): void {
@@ -467,14 +462,11 @@ export default class Player extends cc.Component {
             } else {
                 this.m_playerSpeed = 5;
             }
-
-
             let tilePos = prop.getTilePosition();
-            let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "triggerPropS");
-            let msg = msgObject.create({ x: tilePos.x, y: tilePos.y, });
-            let msgEncode = msgObject.encode(msg).finish();
-            let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_S, msgEncode);
-            NetWebsocket.getInstance().sendMsg(sendBuf);
+            let data = {}
+            data["x"] = tilePos.x;
+            data["y"] = tilePos.y;
+            NetWebsocket.getInstance().sendMsg(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_S, data);
 
             PropManager.getInstance().remove(prop);
             prop.getPropNode().removeFromParent();

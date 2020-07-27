@@ -4,6 +4,7 @@ import CustomizeEvent from "../event/CustomizeEvent";
 import ProtoManager from "./ProtoManager";
 import ProtoConstant from "../constant/ProtoConstant";
 import LocalDataManager from "./LocalDataManager";
+import MsgFactory from "../msg/MsgFactory";
 
 
 const { ccclass, property } = cc._decorator;
@@ -29,15 +30,14 @@ export default class NetWebsocket {
         this.m_socket.binaryType = "arraybuffer";
         this.m_socket.onopen = this.onOpenListener.bind(this);
         this.m_socket.onmessage = this.onMessageListener.bind(this);
+        this.m_socket.close = this.onCloseListener.bind(this);
     }
 
     private onOpenListener(ev: Event): void {
         let playerId = LocalDataManager.getInstance().getPlayerId();
-        let msgoc = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_LOGIN, "loginToGateS")
-        let msg = msgoc.create({ playerId: playerId })
-        let msgEncode = msgoc.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_LOGIN_TO_GATE_S, msgEncode);
-        this.sendMsg(sendBuf);
+        let data = {};
+        data["playerId"] = playerId;
+        this.sendMsg(MsgCmdConstant.MSG_CMD_LOGIN_TO_GATE_S, data);
     }
 
     private onMessageListener(ev: MessageEvent): void {
@@ -45,10 +45,24 @@ export default class NetWebsocket {
         let cmd = dv.getInt32(0);
         let dataLength = dv.getInt32(4);
         var u8view = new Uint8Array(ev.data, 8);
-        CustomizeEvent.getInstance().MFDispatchEvent(cmd, u8view);
+
+        let msgRecv = MsgFactory.getInstance().getRecv();
+        let protoInfo = msgRecv.get(cmd);
+        let msgObject = ProtoManager.getInstance().getMsg(protoInfo.protoFile, protoInfo.protoName);
+        let decodeData = msgObject.decode(u8view);
+        CustomizeEvent.getInstance().MFDispatchEvent(cmd, decodeData);
     }
 
-    public sendMsg(data1): void {
-        this.m_socket.send(data1);
+    private onCloseListener(): void {
+
+    }
+    public sendMsg(cmd, data): void {
+        let msgSend = MsgFactory.getInstance().getSend();
+        let protoInfo = msgSend.get(cmd);
+        let msgObject = ProtoManager.getInstance().getMsg(protoInfo.protoFile, protoInfo.protoName);
+        let msg = msgObject.create(data);
+        let msgEncode = msgObject.encode(msg).finish();
+        let sendBuf = MsgUtil.packMsg(cmd, msgEncode);
+        this.m_socket.send(sendBuf);
     }
 }

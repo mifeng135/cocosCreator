@@ -1,11 +1,8 @@
-import NetWebsocket from "./NetWebsocket";
-import MsgCmdConstant from "../constant/MsgCmdConstant";
 import CustomizeEvent from "../event/CustomizeEvent";
+import MsgFactory from "../msg/MsgFactory";
+import ProtoManager from "./ProtoManager";
+import MsgUtil from "../utils/MsgUtil";
 
-
-const { ccclass, property } = cc._decorator;
-
-@ccclass
 export default class NetHttp {
     private static m_instance: NetHttp = null;
 
@@ -18,7 +15,13 @@ export default class NetHttp {
         return this.m_instance;
     }
 
-    public post(data): void {
+    public post(cmd, data): void {
+        let msgSend = MsgFactory.getInstance().getSend();
+        let protoInfo = msgSend.get(cmd);
+        let msgObject = ProtoManager.getInstance().getMsg(protoInfo.protoFile, protoInfo.protoName);
+        let msg = msgObject.create(data);
+        let msgEncode = msgObject.encode(msg).finish();
+        let sendBuf = MsgUtil.packMsg(cmd, msgEncode);
         let xhr = cc.loader.getXMLHttpRequest();
 
         xhr.onreadystatechange = function () {
@@ -33,10 +36,14 @@ export default class NetHttp {
         };
         xhr.open('POST', "http://192.168.1.217:8000", true);
         xhr.responseType = "arraybuffer"
-        xhr.send(data)
+        xhr.send(sendBuf)
     }
 
     public decodeMsg(cmd: number, u8: Uint8Array): void {
-        CustomizeEvent.getInstance().MFDispatchEvent(cmd, u8);
+        let msgRecv = MsgFactory.getInstance().getRecv();
+        let protoInfo = msgRecv.get(cmd);
+        let msgObject = ProtoManager.getInstance().getMsg(protoInfo.protoFile, protoInfo.protoName);
+        let decodeData = msgObject.decode(u8);
+        CustomizeEvent.getInstance().MFDispatchEvent(cmd, decodeData);
     }
 }

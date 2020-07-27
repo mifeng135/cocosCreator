@@ -2,10 +2,7 @@ import Player from "./Player";
 import CustomizeEvent from "../../event/CustomizeEvent";
 import Joystick from "../../commonUI/Joystick";
 import MsgCmdConstant from "../../constant/MsgCmdConstant";
-import ProtoManager from "../../manager/ProtoManager";
-import ProtoConstant from "../../constant/ProtoConstant";
 import OtherPlayer from "./OtherPlayer";
-import MsgUtil from "../../utils/MsgUtil";
 import NetWebsocket from "../../manager/NetWebsocket";
 import LocalDataManager from "../../manager/LocalDataManager";
 import Bomb from "./Bomb";
@@ -106,9 +103,7 @@ export default class Game extends cc.Component {
     }
 
     onMsgRecvOtherJoinRoom(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_ROOM, "roomPlayerListR");
-        let msg = msgOC.decode(data);
-        this.m_roomPlayerList = msg.playerList
+        this.m_roomPlayerList = data.playerList
     }
 
     public addSelfPlayer(direction, position, playerId, roleType): void {
@@ -133,9 +128,7 @@ export default class Game extends cc.Component {
     }
 
     onMsgRecvGameStart(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_ROOM, "gameStartR");
-        let msg = msgOC.decode(data);
-        this.m_roomPlayerList = msg.playerList
+        this.m_roomPlayerList = data.playerList
         this.initPlayer();
     }
 
@@ -176,29 +169,19 @@ export default class Game extends cc.Component {
         if (this.m_gameStart) {
             return;
         }
-
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_ROOM, "readyS");
-        let msg = msgObject.create({})
-        let msgEncode = msgObject.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_READY_S, msgEncode);
-        NetWebsocket.getInstance().sendMsg(sendBuf);
-
+        let data = {}
+        NetWebsocket.getInstance().sendMsg(MsgCmdConstant.MSG_CMD_GAME_READY_S, data);
         this.node.getChildByName("ready").active = false;
     }
 
     onEixtClick(): void {
-        let msgObject = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "exitRoomS");
-        let msg = msgObject.create({})
-        let msgEncode = msgObject.encode(msg).finish();
-        let sendBuf = MsgUtil.packMsg(MsgCmdConstant.MSG_CMD_GAME_EXIT_ROOM_S, msgEncode);
-        NetWebsocket.getInstance().sendMsg(sendBuf);
+        let data = {}
+        NetWebsocket.getInstance().sendMsg(MsgCmdConstant.MSG_CMD_GAME_EXIT_ROOM_S, data);
     }
 
     public onMsgRecvPlayerBombPlace(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerBombPlaceR");
-        let msg = msgOC.decode(data);
-        let position = cc.v2(msg.x, msg.y);
-        this.addBombToMap(position, msg.power, msg.playerId);
+        let position = cc.v2(data.x, data.y);
+        this.addBombToMap(position, data.power, data.playerId);
     }
 
     public addBombToMap(position: cc.Vec2, power: number, id: number): void {
@@ -246,9 +229,7 @@ export default class Game extends cc.Component {
         }
     }
 
-    public onMsgRecvSynPosition(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "playerSynPositionR");
-        let msg = msgOC.decode(data);
+    public onMsgRecvSynPosition(msg): void {
         let id = msg.id;
         let x = msg.x;
         let y = msg.y;
@@ -263,10 +244,8 @@ export default class Game extends cc.Component {
     }
 
 
-    public onMsgRecvGameOver(data): void {
+    public onMsgRecvGameOver(msg): void {
         let playerId = LocalDataManager.getInstance().getPlayerId();
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "gameOverR");
-        let msg = msgOC.decode(data);
         let winId = msg.winId;
         if (winId == -1) {
             UIManager.getInstance().addUI("gameLose");
@@ -278,11 +257,8 @@ export default class Game extends cc.Component {
         }
     }
 
-    public onMsgRecvBombExplode(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "bombExplodeR");
-        let msg = msgOC.decode(data);
+    public onMsgRecvBombExplode(msg): void {
         let deadList = msg.deadList;
-
         let joystickOc: Joystick = this.m_joystick.getComponent(Joystick);
         joystickOc.setEnabledMove(false);
 
@@ -298,9 +274,7 @@ export default class Game extends cc.Component {
         }
     }
 
-    public onMsgRecvCreateProp(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "createPropR");
-        let msg = msgOC.decode(data);
+    public onMsgRecvCreateProp(msg): void {
         let propList = msg.propList
 
         if (propList.length > 0) {
@@ -320,20 +294,14 @@ export default class Game extends cc.Component {
         return cc.v2(x, y);
     }
 
-    public onMsgRecvTriggerProp(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "triggerPropR");
-        let msg = msgOC.decode(data);
+    public onMsgRecvTriggerProp(msg): void {
         let tile = cc.v2(msg.x, msg.y);
         let prop: Prop = PropManager.getInstance().getPropByTile(tile);
         PropManager.getInstance().removeByTile(tile);
         prop.getPropNode().removeFromParent();
     }
 
-    public onMsgRecvAirPlaneProp(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "airplanePropR");
-        let msg = msgOC.decode(data);
-
-
+    public onMsgRecvAirPlaneProp(msg): void {
         let position = this.m_airPlaneNode.getPosition();
         let sprite = this.m_airPlaneNode.addComponent(cc.Sprite);
         var airplane = new cc.SpriteFrame(this.m_airPlanePng);
@@ -361,9 +329,7 @@ export default class Game extends cc.Component {
         }
     }
 
-    public onMsgRecveExitRoom(data): void {
-        let msgOC = ProtoManager.getInstance().getMsg(ProtoConstant.PROTO_NAME_GAME, "exitRoomR");
-        let msg = msgOC.decode(data);
+    public onMsgRecveExitRoom(msg): void {
         cc.director.loadScene("lobbyScene");
     }
 
