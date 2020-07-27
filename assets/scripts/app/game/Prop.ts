@@ -58,7 +58,7 @@ export default class Prop extends cc.Component {
             this.m_propNode.zIndex = 22;
             let moveTo = cc.moveTo(0.5, this.m_actionEndPos);
             let callFunc = cc.callFunc(() => {
-                this.m_propNode.zIndex = 10;
+                this.m_propNode.zIndex = 8;
             })
             let sequence = cc.sequence(moveTo, callFunc)
             this.m_propNode.runAction(sequence)
