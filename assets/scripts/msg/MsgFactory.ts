@@ -47,6 +47,7 @@ export default class MsgFactory {
     }
 
     private initRecv(): void {
+        this.m_mapRecv.set(MsgCmdConstant.MSG_CMD_REPLACE_ACCOUNT_R, { protoFile: ProtoConstant.PROTO_NAME_LOGIN, protoName: "replaceAccountR" });
         this.m_mapRecv.set(MsgCmdConstant.MSG_CMD_LOGIN_R, { protoFile: ProtoConstant.PROTO_NAME_LOGIN, protoName: "loginR" });
         this.m_mapRecv.set(MsgCmdConstant.MSG_CMD_GAME_CREATE_ROOM_R, { protoFile: ProtoConstant.PROTO_NAME_ROOM, protoName: "createRoomR" });
         this.m_mapRecv.set(MsgCmdConstant.MSG_CMD_GAME_JOIN_ROOM_R, { protoFile: ProtoConstant.PROTO_NAME_ROOM, protoName: "joinRoomR" });
@@ -61,6 +62,7 @@ export default class MsgFactory {
         this.m_mapRecv.set(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, { protoFile: ProtoConstant.PROTO_NAME_GAME, protoName: "triggerPropR" });
         this.m_mapRecv.set(MsgCmdConstant.MSG_CMD_GAME_AIRPLANE_PROP_R, { protoFile: ProtoConstant.PROTO_NAME_GAME, protoName: "airplanePropR" });
         this.m_mapRecv.set(MsgCmdConstant.MSG_CMD_GAME_EXIT_ROOM_R, { protoFile: ProtoConstant.PROTO_NAME_GAME, protoName: "exitRoomR" });
+        this.m_mapRecv.set(MsgCmdConstant.MSG_CMD_GAME_PLAYER_LEFT_ROOM_R, { protoFile: ProtoConstant.PROTO_NAME_GAME, protoName: "playerLeftRoomR" });
     }
 
     public getSend(): Map<number, protoInfo> {

@@ -9,6 +9,8 @@ export default class MsgCmdConstant {
     public static MSG_RET_CODE_SUCCESS: number = 0;
     public static MSG_CMD_LOGIN_TO_GATE_S: number = 1;
 
+
+    public static MSG_CMD_REPLACE_ACCOUNT_R = 101;
     /**
      * 1000 以内预留给服务器定义
      */
@@ -34,7 +36,7 @@ export default class MsgCmdConstant {
     public static MSG_CMD_GAME_JOIN_ROOM_R: number = 4004;
 
 
-    public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R: number = 4005; //这个暂时没有用到
+    public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R: number = 4005; 
 
     public static MSG_CMD_GAME_ROOM_LIST_R: number = 4006;
     public static MSG_CMD_GAME_ROOM_LIST_S: number = 4007;

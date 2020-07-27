@@ -98,6 +98,12 @@ message vec {
 	int32 type = 3;
 }
 
+
+message playerLeftRoomR {
+
+}
+
+
 message exitRoomS {
 
 }

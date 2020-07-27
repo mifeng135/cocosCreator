@@ -6,6 +6,7 @@ import ProtoManager from "../../manager/ProtoManager";
 import LocalDataManager from "../../manager/LocalDataManager";
 import UIManager from "../../manager/UIManager";
 import MsgFactory from "../../msg/MsgFactory";
+import AppGlobal from "../../manager/AppGlobal";
 
 const { ccclass, property } = cc._decorator;
 
@@ -18,6 +19,7 @@ export default class Login extends cc.Component {
     private m_password: string = "";
 
     protected onLoad(): void {
+        AppGlobal.getInstance().initGlobalEvent();
         MsgFactory.getInstance().init();
         ProtoManager.getInstance().loaderProto();
 
@@ -61,10 +63,20 @@ export default class Login extends cc.Component {
             NetWebsocket.getInstance().initWebSocket();
             cc.director.loadScene("lobbyScene");
         } else {
-            UIManager.getInstance().addUI("dialog", "账号或密码不正确");
+
+            let param = {}
+            param["text"] = "您的账号在其他地方登陆";
+            param["clickCallBack"] = this.onButtonClick;
+
+            UIManager.getInstance().addUI("dialog", param);
         }
     }
 
+    private onButtonClick(): void {
+
+    }
+
+    
     public onAccountClick(): void {
         let data = {}
         data["account"] = this.m_account;

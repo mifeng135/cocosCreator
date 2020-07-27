@@ -9,7 +9,8 @@ export default class Dialog extends BaseUIView {
     private m_contentLabel: cc.Label = null;
 
 
-    private m_contentString:string = ""
+    private m_contentString: string = ""
+    private m_callBack: any = null;
     onLoad() {
         this.addUiEvent();
     }
@@ -22,10 +23,14 @@ export default class Dialog extends BaseUIView {
     }
 
     public onInit(prarm: any): void {
-        this.m_contentString = prarm;
+        this.m_contentString = prarm.text;
+        this.m_callBack = prarm.clickCallBack;
     }
 
     private onButtonClick(): void {
         UIManager.getInstance().closeUI();
+        if(this.m_callBack) {
+            this.m_callBack();
+        }
     }
 }

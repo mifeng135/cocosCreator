@@ -87,7 +87,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, this.onMsgRecvTriggerProp, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_AIRPLANE_PROP_R, this.onMsgRecvAirPlaneProp, this);
         CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_EXIT_ROOM_R, this.onMsgRecveExitRoom, this);
-
+        CustomizeEvent.getInstance().MFAddEventListener(MsgCmdConstant.MSG_CMD_GAME_PLAYER_LEFT_ROOM_R, this.onMsgRecvPlayerLeftRoom, this);
     }
 
     private removeEventListener(): void {
@@ -100,6 +100,7 @@ export default class Game extends cc.Component {
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_TRIGGER_PROP_R, this.onMsgRecvTriggerProp);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_AIRPLANE_PROP_R, this.onMsgRecvAirPlaneProp);
         CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_EXIT_ROOM_R, this.onMsgRecveExitRoom);
+        CustomizeEvent.getInstance().MFRemoveEventListener(MsgCmdConstant.MSG_CMD_GAME_PLAYER_LEFT_ROOM_R, this.onMsgRecvPlayerLeftRoom);
     }
 
     onMsgRecvOtherJoinRoom(data): void {
@@ -333,6 +334,16 @@ export default class Game extends cc.Component {
         cc.director.loadScene("lobbyScene");
     }
 
+    public onMsgRecvPlayerLeftRoom(msg): void {
+        let param = {}
+        param["text"] = "本局有人离开游戏";
+        param["clickCallBack"] = this.onButtonClick;
+        UIManager.getInstance().addUI("dialog", param);
+    }
+
+    private onButtonClick(): void {
+        cc.director.loadScene("lobbyScene");
+    }
     private loadAir(): void {
         cc.loader.loadRes("game/airplane", (error, res) => {
             if (error) {

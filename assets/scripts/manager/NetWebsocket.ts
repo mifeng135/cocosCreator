@@ -5,6 +5,7 @@ import ProtoManager from "./ProtoManager";
 import ProtoConstant from "../constant/ProtoConstant";
 import LocalDataManager from "./LocalDataManager";
 import MsgFactory from "../msg/MsgFactory";
+import UIManager from "./UIManager";
 
 
 const { ccclass, property } = cc._decorator;
@@ -30,7 +31,7 @@ export default class NetWebsocket {
         this.m_socket.binaryType = "arraybuffer";
         this.m_socket.onopen = this.onOpenListener.bind(this);
         this.m_socket.onmessage = this.onMessageListener.bind(this);
-        this.m_socket.close = this.onCloseListener.bind(this);
+        this.m_socket.onclose = this.onCloseListener.bind(this);
     }
 
     private onOpenListener(ev: Event): void {
@@ -52,9 +53,15 @@ export default class NetWebsocket {
         let decodeData = msgObject.decode(u8view);
         CustomizeEvent.getInstance().MFDispatchEvent(cmd, decodeData);
     }
-
     private onCloseListener(): void {
+        let param = {}
+        param["text"] = "网络异常请重新登录";
+        param["clickCallBack"] = this.onButtonClick;
+        UIManager.getInstance().addUI("dialog", param);
+    }
 
+    private onButtonClick(): void {
+        cc.director.loadScene("loginScene");
     }
     public sendMsg(cmd, data): void {
         let msgSend = MsgFactory.getInstance().getSend();
