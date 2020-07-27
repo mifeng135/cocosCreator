@@ -67,7 +67,6 @@ export default class Login extends cc.Component {
             let param = {}
             param["text"] = "您的账号在其他地方登陆";
             param["clickCallBack"] = this.onButtonClick;
-
             UIManager.getInstance().addUI("dialog", param);
         }
     }

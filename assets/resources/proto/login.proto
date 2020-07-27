@@ -18,5 +18,9 @@ message loginToGateS {
 }
 
 message replaceAccountR {
+
+}
+
+message heartBeatS {
 	
 }

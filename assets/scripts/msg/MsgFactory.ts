@@ -31,6 +31,7 @@ export default class MsgFactory {
     }
     private initSend(): void {
         this.m_mapSend.set(MsgCmdConstant.MSG_CMD_LOGIN_TO_GATE_S, { protoFile: ProtoConstant.PROTO_NAME_LOGIN, protoName: "loginToGateS" });
+        this.m_mapSend.set(MsgCmdConstant.MSG_HEART_BEAT_S, { protoFile: ProtoConstant.PROTO_NAME_LOGIN, protoName: "heartBeatS" });
 
         this.m_mapSend.set(MsgCmdConstant.MSG_CMD_LOGIN_S, { protoFile: ProtoConstant.PROTO_NAME_LOGIN, protoName: "loginS" });
         this.m_mapSend.set(MsgCmdConstant.MSG_CMD_GAME_CREATE_ROOM_S, { protoFile: ProtoConstant.PROTO_NAME_ROOM, protoName: "createRoomS" });

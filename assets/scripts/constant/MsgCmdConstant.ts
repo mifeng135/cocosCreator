@@ -8,6 +8,7 @@ export default class MsgCmdConstant {
 
     public static MSG_RET_CODE_SUCCESS: number = 0;
     public static MSG_CMD_LOGIN_TO_GATE_S: number = 1;
+    public static MSG_HEART_BEAT_S: number = 4;
 
 
     public static MSG_CMD_REPLACE_ACCOUNT_R = 101;
@@ -15,7 +16,7 @@ export default class MsgCmdConstant {
      * 1000 以内预留给服务器定义
      */
 
-
+     
     //发送给web login 服务器
     public static MSG_CMD_LOGIN_S: number = 1001;
     public static MSG_CMD_LOGIN_R: number = 1002;
@@ -36,7 +37,7 @@ export default class MsgCmdConstant {
     public static MSG_CMD_GAME_JOIN_ROOM_R: number = 4004;
 
 
-    public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R: number = 4005; 
+    public static MSG_CMD_GAME_PLAYER_LEFT_ROOM_R: number = 4005;
 
     public static MSG_CMD_GAME_ROOM_LIST_R: number = 4006;
     public static MSG_CMD_GAME_ROOM_LIST_S: number = 4007;

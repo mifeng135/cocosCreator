@@ -2,21 +2,19 @@ import MsgUtil from "../utils/MsgUtil";
 import MsgCmdConstant from "../constant/MsgCmdConstant";
 import CustomizeEvent from "../event/CustomizeEvent";
 import ProtoManager from "./ProtoManager";
-import ProtoConstant from "../constant/ProtoConstant";
 import LocalDataManager from "./LocalDataManager";
 import MsgFactory from "../msg/MsgFactory";
 import UIManager from "./UIManager";
 
 
-const { ccclass, property } = cc._decorator;
-
-@ccclass
-export default class NetWebsocket {
+export default class NetWebsocket extends cc.Component {
 
     private static m_instance: NetWebsocket = null;
     private m_socket: WebSocket = null;
 
-    private constructor() { }
+    private constructor() {
+        super();
+    }
 
     public static getInstance(): NetWebsocket {
         if (this.m_instance == null) {
@@ -39,8 +37,13 @@ export default class NetWebsocket {
         let data = {};
         data["playerId"] = playerId;
         this.sendMsg(MsgCmdConstant.MSG_CMD_LOGIN_TO_GATE_S, data);
+        this.schedule(this.heartBeat, 30, cc.macro.REPEAT_FOREVER);
     }
 
+    private heartBeat(): void {
+        let data = {};
+        this.sendMsg(MsgCmdConstant.MSG_HEART_BEAT_S, data);
+    }
     private onMessageListener(ev: MessageEvent): void {
         var dv = new DataView(ev.data);
         let cmd = dv.getInt32(0);
@@ -54,6 +57,7 @@ export default class NetWebsocket {
         CustomizeEvent.getInstance().MFDispatchEvent(cmd, decodeData);
     }
     private onCloseListener(): void {
+        this.unschedule(this.heartBeat);
         let param = {}
         param["text"] = "网络异常请重新登录";
         param["clickCallBack"] = this.onButtonClick;
