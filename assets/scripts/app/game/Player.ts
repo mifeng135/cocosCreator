@@ -133,6 +133,11 @@ export default class Player extends cc.Component {
     }
     public setPosition(pos: cc.Vec2): void {
         this.m_postioin = pos;
+        let data = {}
+        data["x"] = pos.x;
+        data["y"] = pos.y;
+        data["direction"] = this.m_direction;
+        NetWebsocket.getInstance().sendMsg(MsgCmdConstant.MSG_CMD_PLAYER_SYN_POSITION_S, data);
     }
 
     public initSpriteDirection(spriteDirection): void {
